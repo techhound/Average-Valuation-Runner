@@ -1,6 +1,6 @@
 # Batch Processing Wisesheets for Power BI
 
-This guide shows how to batch process all your Wisesheets files and export results to Power BI.
+This guide shows how to batch process all your XLSX files and export results to Power BI.
 
 ## Quick Start
 
