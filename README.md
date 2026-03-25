@@ -1,6 +1,21 @@
+# Average Valuation Runner
+
+This Python project creates valuations using some form of market data (Yahoo, paid processors, etc). Currently, it is using data obtain from WiseSheets.com but for future releases it will have connectors to several providers and can be configured via Settings.py (again for future release).
+
+The files wil lbe transformed into an Output directory with three subdirectories:
+- wisesheets_results
+- wisesheets_valinput
+- wisesheets_forecasted
+
+The input files are altered to have a Comparables sheet added with the companies that are considered comparables (for multiples valuation).
+
+You will need a valid subscription (no attribution) to Wisesheets in order to run the Python package (or you'll need to put all the data from wherever you obtain it into the exact formats of the sample files in the data\wisesheets subfolder. As explained, for future release I intend to add other connectors.
+
 # Batch Processing Wisesheets for Power BI
 
 This guide shows how to batch process all your XLSX files and export results to Power BI.
+
+In the Power BI subfolder, I included te starting (work in progress) PBIX for you to take a look. If you decide to use it as is and want to work in the Power Query to make changes, you'll need to change teh paths of the source accordingly. 
 
 ## Quick Start
 
