@@ -80,9 +80,11 @@ class WisesheetsProvider(AbstractDataProvider):
         self,
         workbook_path: str | Path,
         sheet_name: str = "ValuationData",
+        prefer_csv: bool = True,
     ):
         self.workbook_path = Path(workbook_path)
         self.sheet_name = sheet_name
+        self.prefer_csv = prefer_csv
         self._cache: dict[str, StockData] | None = None   # lazy-loaded
  
     # ------------------------------------------------------------------
@@ -92,6 +94,7 @@ class WisesheetsProvider(AbstractDataProvider):
         
         Strategy (in order):
         1. Check for CSV in output/wisesheets_valinput/{TICKER}.csv (canonical)
+           only if prefer_csv is True.
         2. Fall back to Excel ValuationData sheet (legacy support)
         """
         if self._cache is not None:
@@ -103,8 +106,8 @@ class WisesheetsProvider(AbstractDataProvider):
         ticker_from_path = self.workbook_path.stem.upper()
         csv_path = Path(__file__).parent.parent / "output" / "wisesheets_valinput" / f"{ticker_from_path}.csv"
         
-        # Try CSV first (canonical format)
-        if csv_path.exists():
+        # Try CSV first (canonical format) if allowed
+        if self.prefer_csv and csv_path.exists():
             cache = self._load_from_csv(csv_path)
             if cache:
                 self._cache = cache

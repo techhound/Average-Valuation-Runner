@@ -150,13 +150,18 @@ def get_wisesheets_provider(ticker: str) -> "AbstractDataProvider":
             f"Expected: {workbook_path}"
         )
     
-    # Check if file needs transformation (raw Wisesheets format)
-    _auto_transform_if_needed(workbook_path)
-    
-    return WisesheetsProvider(workbook_path=str(workbook_path))
+    # Check if file is raw Wisesheets format; transform if so.
+    # For raw files, always (re)transform so processing uses fresh inputs.
+    _auto_transform_if_needed(workbook_path, force=True)
+
+    # Prefer CSV when available (canonical output). Falls back to Excel if missing.
+    return WisesheetsProvider(
+        workbook_path=str(workbook_path),
+        prefer_csv=True,
+    )
 
 
-def _auto_transform_if_needed(workbook_path: Path) -> None:
+def _auto_transform_if_needed(workbook_path: Path, force: bool = False) -> bool:
     """
     Check if file needs transformation and auto-transform if required.
     
@@ -179,7 +184,7 @@ def _auto_transform_if_needed(workbook_path: Path) -> None:
         
         if not (has_income and has_cashflow):
             # Not raw Wisesheets format, skip transformation
-            return
+            return False
         
         # Extract ticker from Excel filename
         ticker = workbook_path.stem.upper()
@@ -187,6 +192,9 @@ def _auto_transform_if_needed(workbook_path: Path) -> None:
         
         # Determine if transformation is needed
         needs_transform = False
+
+        if force:
+            needs_transform = True
         
         if not csv_path.exists():
             # CSV doesn't exist, need to transform
@@ -201,11 +209,13 @@ def _auto_transform_if_needed(workbook_path: Path) -> None:
         if needs_transform:
             from .wisesheets_transformer import transform_raw_wisesheets
             transform_raw_wisesheets(workbook_path)
+
+        return True
     
     except Exception:
         # If anything goes wrong, just skip auto-transform
         # File will fail to load properly anyway with clearer error
-        pass
+        return False
 
 
 def batch_load_wisesheets(tickers: list[str]) -> dict[str, "AbstractDataProvider"]:

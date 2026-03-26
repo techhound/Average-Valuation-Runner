@@ -81,7 +81,10 @@ def transform_raw_wisesheets(
     wb = openpyxl.load_workbook(input_path, data_only=True)
     
     # ── Extract basic info ─────────────────────────────────────────────
-    ticker = ticker or _extract_ticker(wb)
+    ticker = (ticker or _extract_ticker(wb)).upper()
+    if ticker == "UNKNOWN":
+        # In this project, raw files are expected to be named {TICKER}.xlsx
+        ticker = input_path.stem.upper()
     company_name = company_name or _extract_company_name(wb)
     
     # ── Extract key metrics ────────────────────────────────────────────
@@ -90,6 +93,13 @@ def transform_raw_wisesheets(
     # ── Extract historical data ────────────────────────────────────────
     fcf_history = _extract_fcf_history(wb)
     div_history = _extract_dividend_history(wb)
+    if fcf_history:
+        # Ensure dividend columns exist for PBI schema consistency.
+        # Use the FCF year set and fill any missing dividend years with 0.
+        fcf_years = set(fcf_history.keys())
+        div_years = set(div_history.keys())
+        all_years = sorted(fcf_years | div_years)
+        div_history = {year: float(div_history.get(year, 0.0)) for year in all_years}
     comparables = _extract_comparables(wb)  # from optional Comparables sheet
     
     # ── Build ValuationData in memory (no Excel sheet) ─────────────────
@@ -162,7 +172,7 @@ def transform_raw_wisesheets(
             row_data.extend(["", "", 0, 0])  # ticker, name, price, eps
     
     # Print transformation summary
-    print(f"✓ Transformed: {input_path.name}")
+    print(f"OK: Transformed: {input_path.name}")
     print(f"  Ticker:              {ticker}")
     print(f"  Company:             {company_name}")
     print(f"  Price:               ${metrics.get('current_price', 0):.2f}")
@@ -181,13 +191,23 @@ def transform_raw_wisesheets(
 
 def _extract_ticker(wb) -> str:
     """Extract ticker from any sheet, usually from 'Company' row."""
+    import re
+
+    # Common patterns: "AZO (NYSE)", "MSFT (NASDAQ)", etc.
+    exch_re = re.compile(
+        r"\b([A-Z][A-Z0-9.\-]{0,9})\s*\((NASDAQ|NYSE|AMEX|OTC|TSX|LSE|ASX|HKEX|NYSEARCA|NYSEAMERICAN|NSE|BSE)\b",
+        re.IGNORECASE,
+    )
     for sheet_name in wb.sheetnames:
         ws = wb[sheet_name]
         for row in ws.iter_rows(max_row=5):
             for cell in row:
-                if cell.value and "NASDAQ" in str(cell.value):
-                    # Likely "MSFT (NASDAQ)"
-                    return str(cell.value).split()[0].upper()
+                if not cell.value:
+                    continue
+                text = str(cell.value).strip()
+                m = exch_re.search(text)
+                if m:
+                    return m.group(1).upper()
     return "UNKNOWN"
 
 
@@ -504,6 +524,6 @@ def _export_valuation_data_to_csv(headers: list[str], row_data: list, ticker: st
         writer.writerow(headers)  # Header row
         writer.writerow(row_data)  # Data row
     
-    print(f"  ✓ CSV saved: {csv_path}")
+    print(f"  OK: CSV saved: {csv_path}")
     
     return csv_path
