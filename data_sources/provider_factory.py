@@ -188,7 +188,14 @@ def _auto_transform_if_needed(workbook_path: Path, force: bool = False) -> bool:
         
         # Extract ticker from Excel filename
         ticker = workbook_path.stem.upper()
-        csv_path = workbook_path.parent.parent / "output" / "wisesheets_valinput" / f"{ticker}.csv"
+        output_root = workbook_path.parent.parent / "output"
+        csv_path = output_root / "wisesheets_valinput" / f"{ticker}.csv"
+        normalized_paths = [
+            output_root / "wisesheets_cashflows" / f"{ticker}.csv",
+            output_root / "wisesheets_dividends" / f"{ticker}.csv",
+            output_root / "wisesheets_futurecash" / f"{ticker}.csv",
+            output_root / "wisesheets_comps" / f"{ticker}.csv",
+        ]
         
         # Determine if transformation is needed
         needs_transform = False
@@ -196,14 +203,15 @@ def _auto_transform_if_needed(workbook_path: Path, force: bool = False) -> bool:
         if force:
             needs_transform = True
         
-        if not csv_path.exists():
-            # CSV doesn't exist, need to transform
+        if not csv_path.exists() or any(not p.exists() for p in normalized_paths):
+            # Core or normalized outputs missing, need to transform
             needs_transform = True
         else:
-            # CSV exists, check timestamp: if Excel is newer, re-transform
+            # Outputs exist, check timestamp: if Excel is newer, re-transform
             excel_mtime = os.path.getmtime(workbook_path)
-            csv_mtime = os.path.getmtime(csv_path)
-            if excel_mtime > csv_mtime:
+            output_mtimes = [os.path.getmtime(csv_path)]
+            output_mtimes += [os.path.getmtime(p) for p in normalized_paths]
+            if any(excel_mtime > mtime for mtime in output_mtimes):
                 needs_transform = True
         
         if needs_transform:

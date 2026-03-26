@@ -12,10 +12,9 @@ Raw Wisesheets files contain sheets like:
   - Financial Growth FY
   - Comparables (optional - for Multiples valuation)
 
-This transformer extracts key data and creates a "ValuationData" sheet
-with columns like:
-  - ticker, company_name, current_price, eps_ttm, fcf_YYYY, div_YYYY
-  - comp_1_ticker, comp_1_name, comp_1_price, comp_1_eps (up to 5 comparables)
+This transformer extracts key data and creates:
+  - A core ValuationData CSV (no time-series or comps columns)
+  - Normalized CSVs for dividends, cashflows, future cashflows, and comps
 
 OPTIONAL: Create a "Comparables" sheet with your peer company data:
   
@@ -24,9 +23,9 @@ OPTIONAL: Create a "Comparables" sheet with your peer company data:
   Row 3:           ORCL   | Oracle       | 130.00      | 3.20
   ...
 
-The transformer will automatically populate the comp_* columns in ValuationData
-from this sheet (up to 5 companies). If the Comparables sheet doesn't exist,
-columns will be empty for you to populate manually.
+The transformer will automatically populate the comps table from this sheet
+(up to 5 companies). If the Comparables sheet doesn't exist, the normalized
+comps CSV will be written with headers only.
 
 Then you can use the standard WisesheetsProvider to load the data.
 """
@@ -51,8 +50,8 @@ def transform_raw_wisesheets(
     Transform raw Wisesheets financial data into CSV "ValuationData" format.
     
     NOTE: This function DOES NOT modify the input Excel file. It reads from the
-    raw Wisesheets format, extracts all data, and exports ONLY to CSV in
-    output/wisesheets_valinput/{TICKER}.csv for use as canonical assumptions.
+    raw Wisesheets format, extracts all data, and exports a core CSV to
+    output/wisesheets_valinput/{TICKER}.csv plus normalized tables in output/.
     
     Parameters
     ----------
@@ -93,42 +92,20 @@ def transform_raw_wisesheets(
     # ── Extract historical data ────────────────────────────────────────
     fcf_history = _extract_fcf_history(wb)
     div_history = _extract_dividend_history(wb)
-    if fcf_history:
-        # Ensure dividend columns exist for PBI schema consistency.
-        # Use the FCF year set and fill any missing dividend years with 0.
-        fcf_years = set(fcf_history.keys())
-        div_years = set(div_history.keys())
-        all_years = sorted(fcf_years | div_years)
-        div_history = {year: float(div_history.get(year, 0.0)) for year in all_years}
     comparables = _extract_comparables(wb)  # from optional Comparables sheet
     
     # ── Build ValuationData in memory (no Excel sheet) ─────────────────
-    # Header row
-    headers = [
+    # Core header row (no time-series or comps columns)
+    core_headers = [
         "ticker", "company_name", "sector", "industry",
         "current_price", "eps_ttm", "eps_growth_rate",
         "beta", "risk_free_rate", "equity_risk_premium", "aaa_bond_yield",
         "terminal_growth_rate", "market_cap", "cash_and_equivalents", "total_debt",
         "shares_outstanding", "wacc", "dividend_growth_rate", "fcf_growth_rate",
     ]
-    
-    # Add FCF columns (fcf_YYYY)
-    for year in sorted(fcf_history.keys()):
-        headers.append(f"fcf_{year}")
-    
-    # Add dividend columns (div_YYYY)
-    for year in sorted(div_history.keys()):
-        headers.append(f"div_{year}")
-    
-    # Add comparable company columns (up to 5 comps)
-    for comp_idx in range(1, 6):
-        headers.append(f"comp_{comp_idx}_ticker")
-        headers.append(f"comp_{comp_idx}_name")
-        headers.append(f"comp_{comp_idx}_price")
-        headers.append(f"comp_{comp_idx}_eps")
-    
-    # Data row
-    row_data = [
+
+    # Core data row
+    core_row_data = [
         ticker,
         company_name,
         metrics.get("sector", ""),
@@ -150,27 +127,6 @@ def transform_raw_wisesheets(
         0,  # fcf_growth_rate (0 = compute from history)
     ]
     
-    # Add FCF values
-    for year in sorted(fcf_history.keys()):
-        row_data.append(fcf_history[year])
-    
-    # Add dividend values
-    for year in sorted(div_history.keys()):
-        row_data.append(div_history[year])
-    
-    # Add comparable company columns
-    for comp_idx in range(1, 6):
-        if comp_idx <= len(comparables):
-            comp = comparables[comp_idx - 1]
-            row_data.extend([
-                comp.get("ticker", ""),
-                comp.get("name", ""),
-                comp.get("price", 0),
-                comp.get("eps", 0),
-            ])
-        else:
-            row_data.extend(["", "", 0, 0])  # ticker, name, price, eps
-    
     # Print transformation summary
     print(f"OK: Transformed: {input_path.name}")
     print(f"  Ticker:              {ticker}")
@@ -179,9 +135,17 @@ def transform_raw_wisesheets(
     print(f"  FCF years:           {sorted(fcf_history.keys())}")
     print(f"  Dividend years:      {sorted(div_history.keys())}")
     
-    # Export ValuationData to CSV (canonical format)
-    csv_path = _export_valuation_data_to_csv(headers, row_data, ticker)
-    
+    # Export core ValuationData to CSV (canonical format)
+    csv_path = _export_core_valuation_data_to_csv(core_headers, core_row_data, ticker)
+
+    # Export normalized tables
+    _export_normalized_tables(
+        ticker=ticker,
+        fcf_history=fcf_history,
+        div_history=div_history,
+        comparables=comparables,
+    )
+
     return csv_path
 
 
@@ -490,7 +454,7 @@ def _extract_comparables(wb) -> list[dict]:
     
     return comparables
 
-def _export_valuation_data_to_csv(headers: list[str], row_data: list, ticker: str) -> Path:
+def _export_core_valuation_data_to_csv(headers: list[str], row_data: list, ticker: str) -> Path:
     """
     Export ValuationData to CSV for Power BI and valuation engine.
     
@@ -526,4 +490,102 @@ def _export_valuation_data_to_csv(headers: list[str], row_data: list, ticker: st
     
     print(f"  OK: CSV saved: {csv_path}")
     
+    return csv_path
+
+
+def _export_normalized_tables(
+    ticker: str,
+    fcf_history: dict[int, float],
+    div_history: dict[int, float],
+    comparables: list[dict],
+) -> None:
+    """
+    Export normalized tables for Power BI:
+      - Dividends: output/wisesheets_dividends/{TICKER}.csv
+      - Cashflows: output/wisesheets_cashflows/{TICKER}.csv
+      - Future cashflows: output/wisesheets_futurecash/{TICKER}.csv
+      - Comps: output/wisesheets_comps/{TICKER}.csv
+
+    If no rows exist, writes headers only and logs a status note.
+    """
+    base_dir = Path(__file__).parent.parent / "output"
+
+    # Dividends (USD per share)
+    div_rows = [
+        [ticker, year, div_history[year]]
+        for year in sorted(div_history.keys())
+    ]
+    _export_normalized_csv(
+        output_dir=base_dir / "wisesheets_dividends",
+        filename=f"{ticker.upper()}.csv",
+        headers=["ticker", "year", "dividend_per_share"],
+        rows=div_rows,
+        status_label="dividends",
+        ticker=ticker,
+    )
+
+    # Cashflows (FCF in millions)
+    fcf_rows = [
+        [ticker, year, fcf_history[year]]
+        for year in sorted(fcf_history.keys())
+    ]
+    _export_normalized_csv(
+        output_dir=base_dir / "wisesheets_cashflows",
+        filename=f"{ticker.upper()}.csv",
+        headers=["ticker", "year", "fcf"],
+        rows=fcf_rows,
+        status_label="cashflows",
+        ticker=ticker,
+    )
+
+    # Future cashflows (placeholder for now)
+    _export_normalized_csv(
+        output_dir=base_dir / "wisesheets_futurecash",
+        filename=f"{ticker.upper()}.csv",
+        headers=["ticker", "year", "fcf"],
+        rows=[],
+        status_label="futurecash",
+        ticker=ticker,
+    )
+
+    # Comparables
+    comp_rows = []
+    for comp in comparables:
+        comp_rows.append([
+            ticker,
+            comp.get("ticker", ""),
+            comp.get("name", ""),
+            comp.get("price", 0),
+            comp.get("eps", 0),
+        ])
+    _export_normalized_csv(
+        output_dir=base_dir / "wisesheets_comps",
+        filename=f"{ticker.upper()}.csv",
+        headers=["ticker", "comp_ticker", "comp_name", "comp_price", "comp_eps"],
+        rows=comp_rows,
+        status_label="comps",
+        ticker=ticker,
+    )
+
+
+def _export_normalized_csv(
+    output_dir: Path,
+    filename: str,
+    headers: list[str],
+    rows: list[list],
+    status_label: str,
+    ticker: str,
+) -> Path:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    csv_path = output_dir / filename
+
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+        if rows:
+            writer.writerows(rows)
+        else:
+            print(f"  STATUS: [{ticker}] {status_label} empty - wrote header-only CSV")
+
+    print(f"  OK: CSV saved: {csv_path}")
     return csv_path

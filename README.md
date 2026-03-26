@@ -2,9 +2,13 @@
 
 This Python project creates valuations using some form of market data (Yahoo, paid processors, etc). Currently, it is using data obtain from WiseSheets.com but for future releases it will have connectors to several providers and can be configured via Settings.py (again for future release).
 
-The files wil lbe transformed into an Output directory with three subdirectories:
+The files will be transformed into an Output directory with these subdirectories:
 - wisesheets_results
-- wisesheets_valinput
+- wisesheets_valinput (core inputs only)
+- wisesheets_cashflows (normalized historical cashflows)
+- wisesheets_dividends (normalized dividends)
+- wisesheets_comps (normalized comparables)
+- wisesheets_futurecash (reserved for future cashflows)
 - wisesheets_forecasted
 
 The input files are altered to have a Comparables sheet added with the companies that are considered comparables (for multiples valuation).

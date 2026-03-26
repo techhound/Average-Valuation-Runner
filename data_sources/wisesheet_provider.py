@@ -141,7 +141,18 @@ class WisesheetsProvider(AbstractDataProvider):
                 for row in reader:
                     # Normalize row keys: lowercase
                     record = {k.strip().lower(): v for k, v in row.items()}
-                    sd = self._row_to_stockdata(record)
+                    ticker = self._safe_str(record.get("ticker")).upper()
+                    if not ticker:
+                        continue
+                    fcf_history = self._load_cashflows_history(ticker)
+                    dividend_history = self._load_dividend_history(ticker)
+                    comparables = self._load_comparables(ticker)
+                    sd = self._row_to_stockdata(
+                        record,
+                        fcf_history=fcf_history,
+                        dividend_history=dividend_history,
+                        comparables=comparables,
+                    )
                     if sd is not None:
                         cache[sd.ticker] = sd
         except Exception:
@@ -231,49 +242,133 @@ class WisesheetsProvider(AbstractDataProvider):
     @staticmethod
     def _safe_str(value, default="") -> str:
         return str(value).strip() if value is not None else default
+
+    @staticmethod
+    def _safe_int(value) -> int | None:
+        if value is None or value == "":
+            return None
+        try:
+            return int(float(value))
+        except (TypeError, ValueError):
+            return None
+
+    def _normalized_path(self, subdir: str, ticker: str) -> Path:
+        return Path(__file__).parent.parent / "output" / subdir / f"{ticker.upper()}.csv"
+
+    def _read_normalized_csv(self, path: Path) -> list[dict]:
+        if not path.exists():
+            return []
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                reader = csv_module.DictReader(f)
+                if reader.fieldnames is None:
+                    return []
+                rows = []
+                for row in reader:
+                    rows.append({k.strip().lower(): v for k, v in row.items()})
+                return rows
+        except Exception:
+            return []
+
+    def _load_cashflows_history(self, ticker: str) -> dict[int, float]:
+        rows = self._read_normalized_csv(self._normalized_path("wisesheets_cashflows", ticker))
+        history: dict[int, float] = {}
+        for row in rows:
+            row_ticker = self._safe_str(row.get("ticker")).upper()
+            if row_ticker and row_ticker != ticker.upper():
+                continue
+            year = self._safe_int(row.get("year"))
+            fcf_value = self._safe(row.get("fcf"))
+            if year is not None:
+                history[year] = fcf_value
+        return dict(sorted(history.items()))
+
+    def _load_dividend_history(self, ticker: str) -> list[float]:
+        rows = self._read_normalized_csv(self._normalized_path("wisesheets_dividends", ticker))
+        div_map: dict[int, float] = {}
+        for row in rows:
+            row_ticker = self._safe_str(row.get("ticker")).upper()
+            if row_ticker and row_ticker != ticker.upper():
+                continue
+            year = self._safe_int(row.get("year"))
+            div_value = self._safe(row.get("dividend_per_share"))
+            if year is not None:
+                div_map[year] = div_value
+        return [div_map[y] for y in sorted(div_map)]
+
+    def _load_comparables(self, ticker: str) -> list[ComparableCompany]:
+        rows = self._read_normalized_csv(self._normalized_path("wisesheets_comps", ticker))
+        comps: list[ComparableCompany] = []
+        for row in rows:
+            row_ticker = self._safe_str(row.get("ticker")).upper()
+            if row_ticker and row_ticker != ticker.upper():
+                continue
+            comp_ticker = self._safe_str(row.get("comp_ticker")).upper()
+            if not comp_ticker:
+                continue
+            comp_name = self._safe_str(row.get("comp_name"), comp_ticker)
+            comp_price = self._safe(row.get("comp_price"))
+            comp_eps = self._safe(row.get("comp_eps"))
+            if comp_price > 0:
+                comps.append(ComparableCompany(
+                    ticker=comp_ticker,
+                    company_name=comp_name,
+                    stock_price=comp_price,
+                    eps=comp_eps,
+                ))
+        return comps
  
-    def _row_to_stockdata(self, rec: dict) -> StockData | None:
+    def _row_to_stockdata(
+        self,
+        rec: dict,
+        fcf_history: dict[int, float] | None = None,
+        dividend_history: list[float] | None = None,
+        comparables: list[ComparableCompany] | None = None,
+    ) -> StockData | None:
         ticker = self._safe_str(rec.get("ticker")).upper()
         if not ticker:
             return None
  
         # ── FCF history: columns named fcf_YYYY ──────────────────────
-        fcf_history: dict[int, float] = {}
-        for k, v in rec.items():
-            m = re.match(r"^fcf_(\d{4})$", k)
-            if m and v is not None:
-                try:
-                    fcf_history[int(m.group(1))] = float(v)
-                except (TypeError, ValueError):
-                    pass
+        if fcf_history is None:
+            fcf_history = {}
+            for k, v in rec.items():
+                m = re.match(r"^fcf_(\d{4})$", k)
+                if m and v is not None:
+                    try:
+                        fcf_history[int(m.group(1))] = float(v)
+                    except (TypeError, ValueError):
+                        pass
  
         # ── Dividend history: columns named div_YYYY ──────────────────
-        div_map: dict[int, float] = {}
-        for k, v in rec.items():
-            m = re.match(r"^div_(\d{4})$", k)
-            if m and v is not None:
-                try:
-                    div_map[int(m.group(1))] = float(v)
-                except (TypeError, ValueError):
-                    pass
-        dividend_history = [div_map[y] for y in sorted(div_map)]
+        if dividend_history is None:
+            div_map: dict[int, float] = {}
+            for k, v in rec.items():
+                m = re.match(r"^div_(\d{4})$", k)
+                if m and v is not None:
+                    try:
+                        div_map[int(m.group(1))] = float(v)
+                    except (TypeError, ValueError):
+                        pass
+            dividend_history = [div_map[y] for y in sorted(div_map)]
  
         # ── Comparable companies: comp_N_ticker / comp_N_price / comp_N_eps ──
-        comparables: list[ComparableCompany] = []
-        for idx in range(1, 6):          # support up to 5 comps
-            ct = self._safe_str(rec.get(f"comp_{idx}_ticker"))
-            if not ct:
-                continue
-            cn = self._safe_str(rec.get(f"comp_{idx}_name"), ct)
-            cp = self._safe(rec.get(f"comp_{idx}_price"))
-            ce = self._safe(rec.get(f"comp_{idx}_eps"))
-            if ct and cp > 0:
-                comparables.append(ComparableCompany(
-                    ticker=ct.upper(),
-                    company_name=cn,
-                    stock_price=cp,
-                    eps=ce,
-                ))
+        if comparables is None:
+            comparables = []
+            for idx in range(1, 6):          # support up to 5 comps
+                ct = self._safe_str(rec.get(f"comp_{idx}_ticker"))
+                if not ct:
+                    continue
+                cn = self._safe_str(rec.get(f"comp_{idx}_name"), ct)
+                cp = self._safe(rec.get(f"comp_{idx}_price"))
+                ce = self._safe(rec.get(f"comp_{idx}_eps"))
+                if ct and cp > 0:
+                    comparables.append(ComparableCompany(
+                        ticker=ct.upper(),
+                        company_name=cn,
+                        stock_price=cp,
+                        eps=ce,
+                    ))
  
         return StockData(
             ticker=ticker,
