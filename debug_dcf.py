@@ -7,7 +7,7 @@ from valuation.valuation_runner import run_all
 provider = get_provider(source="yahoo")
 
 # Fetch and value MSFT and NVDA
-for ticker in ["MSFT", "NVDA"]:
+for ticker in ["MSFT"]:
     print(f"\n{'='*80}")
     print(f"Valuing {ticker}")
     print(f"{'='*80}")
