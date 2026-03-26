@@ -104,7 +104,7 @@ class WisesheetsProvider(AbstractDataProvider):
         
         # Extract ticker from Excel filename for CSV lookup
         ticker_from_path = self.workbook_path.stem.upper()
-        csv_path = Path(__file__).parent.parent / "output" / "wisesheets_valinput" / f"{ticker_from_path}.csv"
+        csv_path = Path(__file__).parent.parent / "output" / "wisesheets_valinput" / f"{ticker_from_path}_valinput.csv"
         
         # Try CSV first (canonical format) if allowed
         if self.prefer_csv and csv_path.exists():
@@ -252,8 +252,8 @@ class WisesheetsProvider(AbstractDataProvider):
         except (TypeError, ValueError):
             return None
 
-    def _normalized_path(self, subdir: str, ticker: str) -> Path:
-        return Path(__file__).parent.parent / "output" / subdir / f"{ticker.upper()}.csv"
+    def _normalized_path(self, subdir: str, filename: str) -> Path:
+        return Path(__file__).parent.parent / "output" / subdir / filename
 
     def _read_normalized_csv(self, path: Path) -> list[dict]:
         if not path.exists():
@@ -271,7 +271,9 @@ class WisesheetsProvider(AbstractDataProvider):
             return []
 
     def _load_cashflows_history(self, ticker: str) -> dict[int, float]:
-        rows = self._read_normalized_csv(self._normalized_path("wisesheets_cashflows", ticker))
+        rows = self._read_normalized_csv(
+            self._normalized_path("wisesheets_cashflows", f"{ticker.upper()}_cashflows.csv")
+        )
         history: dict[int, float] = {}
         for row in rows:
             row_ticker = self._safe_str(row.get("ticker")).upper()
@@ -284,7 +286,9 @@ class WisesheetsProvider(AbstractDataProvider):
         return dict(sorted(history.items()))
 
     def _load_dividend_history(self, ticker: str) -> list[float]:
-        rows = self._read_normalized_csv(self._normalized_path("wisesheets_dividends", ticker))
+        rows = self._read_normalized_csv(
+            self._normalized_path("wisesheets_dividends", f"{ticker.upper()}_dividends.csv")
+        )
         div_map: dict[int, float] = {}
         for row in rows:
             row_ticker = self._safe_str(row.get("ticker")).upper()
@@ -297,7 +301,9 @@ class WisesheetsProvider(AbstractDataProvider):
         return [div_map[y] for y in sorted(div_map)]
 
     def _load_comparables(self, ticker: str) -> list[ComparableCompany]:
-        rows = self._read_normalized_csv(self._normalized_path("wisesheets_comps", ticker))
+        rows = self._read_normalized_csv(
+            self._normalized_path("wisesheets_comps", f"{ticker.upper()}_comps.csv")
+        )
         comps: list[ComparableCompany] = []
         for row in rows:
             row_ticker = self._safe_str(row.get("ticker")).upper()

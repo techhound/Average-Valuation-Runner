@@ -481,7 +481,7 @@ def _export_core_valuation_data_to_csv(headers: list[str], row_data: list, ticke
     output_dir = Path(__file__).parent.parent / "output" / "wisesheets_valinput"
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    csv_path = output_dir / f"{ticker.upper()}.csv"
+    csv_path = output_dir / f"{ticker.upper()}_valinput.csv"
     
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -501,10 +501,9 @@ def _export_normalized_tables(
 ) -> None:
     """
     Export normalized tables for Power BI:
-      - Dividends: output/wisesheets_dividends/{TICKER}.csv
-      - Cashflows: output/wisesheets_cashflows/{TICKER}.csv
-      - Future cashflows: output/wisesheets_futurecash/{TICKER}.csv
-      - Comps: output/wisesheets_comps/{TICKER}.csv
+      - Dividends: output/wisesheets_dividends/{TICKER}_dividends.csv
+      - Cashflows: output/wisesheets_cashflows/{TICKER}_cashflows.csv
+      - Comps: output/wisesheets_comps/{TICKER}_comps.csv
 
     If no rows exist, writes headers only and logs a status note.
     """
@@ -517,7 +516,7 @@ def _export_normalized_tables(
     ]
     _export_normalized_csv(
         output_dir=base_dir / "wisesheets_dividends",
-        filename=f"{ticker.upper()}.csv",
+        filename=f"{ticker.upper()}_dividends.csv",
         headers=["ticker", "year", "dividend_per_share"],
         rows=div_rows,
         status_label="dividends",
@@ -531,20 +530,10 @@ def _export_normalized_tables(
     ]
     _export_normalized_csv(
         output_dir=base_dir / "wisesheets_cashflows",
-        filename=f"{ticker.upper()}.csv",
+        filename=f"{ticker.upper()}_cashflows.csv",
         headers=["ticker", "year", "fcf"],
         rows=fcf_rows,
         status_label="cashflows",
-        ticker=ticker,
-    )
-
-    # Future cashflows (placeholder for now)
-    _export_normalized_csv(
-        output_dir=base_dir / "wisesheets_futurecash",
-        filename=f"{ticker.upper()}.csv",
-        headers=["ticker", "year", "fcf"],
-        rows=[],
-        status_label="futurecash",
         ticker=ticker,
     )
 
@@ -560,7 +549,7 @@ def _export_normalized_tables(
         ])
     _export_normalized_csv(
         output_dir=base_dir / "wisesheets_comps",
-        filename=f"{ticker.upper()}.csv",
+        filename=f"{ticker.upper()}_comps.csv",
         headers=["ticker", "comp_ticker", "comp_name", "comp_price", "comp_eps"],
         rows=comp_rows,
         status_label="comps",

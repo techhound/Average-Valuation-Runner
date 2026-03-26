@@ -189,12 +189,11 @@ def _auto_transform_if_needed(workbook_path: Path, force: bool = False) -> bool:
         # Extract ticker from Excel filename
         ticker = workbook_path.stem.upper()
         output_root = workbook_path.parent.parent / "output"
-        csv_path = output_root / "wisesheets_valinput" / f"{ticker}.csv"
+        csv_path = output_root / "wisesheets_valinput" / f"{ticker}_valinput.csv"
         normalized_paths = [
-            output_root / "wisesheets_cashflows" / f"{ticker}.csv",
-            output_root / "wisesheets_dividends" / f"{ticker}.csv",
-            output_root / "wisesheets_futurecash" / f"{ticker}.csv",
-            output_root / "wisesheets_comps" / f"{ticker}.csv",
+            output_root / "wisesheets_cashflows" / f"{ticker}_cashflows.csv",
+            output_root / "wisesheets_dividends" / f"{ticker}_dividends.csv",
+            output_root / "wisesheets_comps" / f"{ticker}_comps.csv",
         ]
         
         # Determine if transformation is needed

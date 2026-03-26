@@ -7,8 +7,7 @@ The files will be transformed into an Output directory with these subdirectories
 - wisesheets_valinput (core inputs only)
 - wisesheets_cashflows (normalized historical cashflows)
 - wisesheets_dividends (normalized dividends)
-- wisesheets_comps (normalized comparables)
-- wisesheets_futurecash (reserved for future cashflows)
+- wise_sheets_comps (normalized comparables)
 - wisesheets_forecasted
 
 The input files are altered to have a Comparables sheet added with the companies that are considered comparables (for multiples valuation).
