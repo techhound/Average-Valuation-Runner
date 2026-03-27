@@ -270,6 +270,19 @@ def _extract_key_metrics(wb, ticker: str) -> dict:
         except Exception:
             # If yfinance fails, sector/industry will remain empty
             pass
+
+        # Optional: beta override from Comparables!L2
+        comp_sheet = next(
+            (s for s in wb.sheetnames if "comparable" in s.lower()),
+            None,
+        )
+        if comp_sheet:
+            try:
+                beta_cell = wb[comp_sheet].cell(2, 12).value  # L2
+                if beta_cell is not None:
+                    metrics["beta"] = float(beta_cell)
+            except (ValueError, TypeError):
+                pass
         
         break  # Found and processed the Key Metrics sheet
     

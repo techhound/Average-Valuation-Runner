@@ -1,2 +1,2 @@
 ticker,company_name,sector,industry,current_price,eps_ttm,eps_growth_rate,beta,risk_free_rate,equity_risk_premium,aaa_bond_yield,terminal_growth_rate,market_cap,cash_and_equivalents,total_debt,shares_outstanding,wacc,dividend_growth_rate,fcf_growth_rate
-AVGO,AVGO,Technology,Semiconductors,362.55,4.907894736842105,0,1.0,0.043,0.05,0.044,0.03,1708335.6,0,0,4712.0,0,0,0
+AVGO,AVGO,Technology,Semiconductors,362.55,4.907894736842105,0,1.257,0.043,0.05,0.044,0.03,1708335.6,0,0,4712.0,0,0,0

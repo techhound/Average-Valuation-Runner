@@ -154,6 +154,32 @@ def _write_cashflows_long(data, path: Path) -> None:
         writer.writerows(rows)
 
 
+def _write_computed_assumptions(summary, path: Path) -> None:
+    row = {
+        "ticker": summary.ticker,
+        "data_source": summary.data_source,
+        "run_timestamp": summary.run_timestamp.isoformat(),
+        "dcf_growth_rate": summary.dcf_growth_rate,
+        "dcf_discount_rate": summary.dcf_discount_rate,
+        "dcf_terminal_rate": summary.dcf_terminal_rate,
+        "dcf_fcf_base_m": summary.dcf_fcf_base_m,
+        "ddm_d0": summary.ddm_d0,
+        "ddm_growth_rate": summary.ddm_growth_rate,
+        "ddm_discount_rate": summary.ddm_discount_rate,
+        "graham_eps": summary.graham_eps,
+        "graham_growth_pct": summary.graham_growth_pct,
+        "graham_aaa_yield_pct": summary.graham_aaa_yield_pct,
+        "multiples_avg_pe": summary.multiples_avg_pe,
+        "multiples_median_pe": summary.multiples_median_pe,
+        "multiples_n_comps": summary.multiples_n_comps,
+    }
+
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(row.keys()))
+        writer.writeheader()
+        writer.writerow(row)
+
+
 def _extract_dividends_paid_cashflow(workbook_path: Path) -> dict[int, float]:
     """
     Extract dividends paid from the Cash Flow statement.
@@ -259,6 +285,9 @@ def batch_process_wisesheets(
 
     cashflows_dir = output_dir.parent / "wisesheets_cashflows"
     cashflows_dir.mkdir(parents=True, exist_ok=True)
+
+    assumptions_dir = output_dir.parent / "computed_assumptions"
+    assumptions_dir.mkdir(parents=True, exist_ok=True)
     
     # Scan for Wisesheets files
     wisesheets_dir = Path(__file__).parent / "data" / "wisesheets"
@@ -351,6 +380,12 @@ def batch_process_wisesheets(
                 stock_data,
                 xlsx_path,
                 dividends_dir / f"{ticker}_dividends.csv",
+            )
+
+            # Write computed assumptions
+            _write_computed_assumptions(
+                summary,
+                assumptions_dir / f"{ticker}_assumptions.csv",
             )
             
             print(f"OK: {summary.signal}")
