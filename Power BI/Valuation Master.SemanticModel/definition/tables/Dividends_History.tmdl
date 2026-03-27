@@ -1,0 +1,66 @@
+table Dividends_History
+	lineageTag: e1a34e5f-d652-4bf4-9e33-752844e79e8c
+
+	column ticker
+		dataType: string
+		lineageTag: 03bbb09b-e56d-4f74-b8be-6f8297dc1b20
+		summarizeBy: none
+		sourceColumn: ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dividend
+		dataType: double
+		lineageTag: b4f3e40e-76c9-43f8-bef8-ad29ff9c362b
+		summarizeBy: sum
+		sourceColumn: Dividend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 3f788464-5b9a-47f0-8e4e-6cc7b0e56583
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dividends_History = m
+		mode: import
+		source =
+				let
+				    Source = ValInput,
+				    KeepCols = Table.SelectColumns(
+				        Source,
+				        {"ticker"} &
+				        List.Select(
+				            Table.ColumnNames(Source),
+				            each Text.StartsWith(_, "div_")
+				        )
+				    ),
+				    Unpivot = Table.UnpivotOtherColumns(KeepCols, {"ticker"}, "YearCol", "Dividend"),
+				    AddYear = Table.AddColumn(
+				        Unpivot,
+				        "Year",
+				        each Number.FromText(Text.AfterDelimiter([YearCol], "_")),
+				        Int64.Type
+				    ),
+				    RemoveYearCol = Table.RemoveColumns(AddYear, {"YearCol"}),
+				    FilterNulls = Table.SelectRows(
+				        RemoveYearCol,
+				        each [Dividend] <> null and [Dividend] <> "" and [Dividend] <> "0"
+				    ),
+				    ChangeTypes = Table.TransformColumnTypes(
+				        FilterNulls,
+				        {{"Dividend", type number}}
+				    )
+				in
+				    ChangeTypes
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,263 @@
+table _Measures
+	lineageTag: 3bb61817-54b6-411b-ba46-1665d339e7e6
+
+	measure 'DCF Value' =
+			
+			SELECTEDVALUE( Results[dcf_value] )
+		lineageTag: dc0899b3-bd8d-49dc-bbb0-177c52c9d8e4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF Growth Rate' =
+			
+			SELECTEDVALUE( Results[dcf_growth_rate] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 42c5be5d-67e0-4ed1-89dd-9c1cd9e58a61
+
+	measure 'DCF Discount Rate' =
+			
+			SELECTEDVALUE( Results[dcf_discount_rate] )
+		lineageTag: c8869d99-d074-4cbf-988d-2184cec520be
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF Terminal Rate' =
+			
+			SELECTEDVALUE( Results[dcf_terminal_rate] )
+		lineageTag: dcf5dbbe-5b4b-43db-a401-22383009769c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF FCF Base' =
+			
+			SELECTEDVALUE( Results[dcf_fcf_base_m] )
+		formatString: 0
+		lineageTag: 4fd63642-f530-4722-9650-6e28bc596de0
+
+	measure 'Current Price' = SUM(Results[current_price])
+		lineageTag: 6dbf4a81-ba0c-49c0-8ad5-ff745513be4e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF vs Price' =
+			
+			VAR dcf   = [DCF Value]
+			VAR price = [Current Price]
+			RETURN
+			    IF(
+			        ISBLANK(dcf) || ISBLANK(price) || price = 0,
+			        BLANK(),
+			        DIVIDE( dcf - price, price )
+			    )
+		lineageTag: 7105c045-b8e4-48d1-b595-94a7b55592c0
+
+	measure 'DCF vs Price Label' =
+			
+			VAR diff = [DCF vs Price]
+			RETURN
+			    IF( ISBLANK(diff), "--", FORMAT(diff, "+0.0%;-0.0%;0.0%") )
+		lineageTag: 3919c970-0814-4452-a329-2787b5a84163
+
+	measure 'FCF Latest Year' =
+			
+			CALCULATE(
+			    MAX( FCF_History[Year] ),
+			    ALLEXCEPT( FCF_History, FCF_History[ticker] )
+			)
+		formatString: 0
+		lineageTag: 8fb4fc60-8e42-4e1d-9d84-55fa87ea9059
+
+	measure 'FCF Latest Value' =
+			
+			VAR latestYear = CALCULATE( MAX( FCF_History[Year] ), ALLEXCEPT( FCF_History, FCF_History[ticker] ) )
+			RETURN
+			CALCULATE(
+			    SUM( FCF_History[FCF] ),
+			    FCF_History[Year] = latestYear
+			)
+		lineageTag: 53edf473-2e37-4a48-9eb7-5d9d219858b7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Tickers = VALUES(FCF_History[ticker])
+		lineageTag: bba5af2b-a7ac-4922-bc18-da4806b19e9c
+
+	measure 'Model Value' =
+			
+			SWITCH(
+			    SELECTEDVALUE( ModelLabels[Model] ),
+			    "Current Price", SELECTEDVALUE( Results[current_price] ),
+			    "DCF",           SELECTEDVALUE( Results[dcf_value] ),
+			    "Graham",        SELECTEDVALUE( Results[graham_value] ),
+			    "Multiples",     SELECTEDVALUE( Results[multiples_value] ),
+			    "DDM",           SELECTEDVALUE( Results[ddm_value] ),
+			    BLANK()
+			)
+		lineageTag: b90bce4f-9960-4eba-b7fc-44f81c638218
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Model Bar Color' =
+			
+			SWITCH(
+			    SELECTEDVALUE( ModelLabels[Model] ),
+			    "Current Price", "#4A9FD4",
+			    "DCF",           "#5DCAA5",
+			    "Graham",        "#5DCAA5",
+			    "Multiples",     "#EF9F27",
+			    "DDM",           "#7BA7D4",
+			    "#4A9FD4"
+			)
+		lineageTag: 37189d64-b3a8-443f-8c08-6792ea5d7835
+
+	measure Signal = SELECTEDVALUE((Results[signal]))
+		lineageTag: 34ec064a-c2bb-4b19-b90c-4149da0dced3
+
+	measure 'Signal Background Color' =
+			
+			SWITCH(
+			    [Signal],
+			    "Buy",  "#0d3020",
+			    "Sell", "#3d1a1a",
+			    "Hold", "#2a2010",
+			    "#0F2D50"
+			)
+		lineageTag: 5c447ad3-a71c-4950-9fd6-23c02bfec93d
+
+	measure 'Model vs Price Pct' =
+			
+			VAR val = [Model Value]
+			VAR price = SELECTEDVALUE( Results[current_price] )
+			RETURN
+			    IF(
+			        ISBLANK(val) || ISBLANK(price) || price = 0 || val <= 0,
+			        BLANK(),
+			        DIVIDE( val - price, price )
+			    )
+		lineageTag: 1ab140fb-81b6-4508-b0d8-583ff4602ffc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Model vs Price Label' =
+			
+			VAR pct = [Model vs Price Pct]
+			VAR valmodel = SELECTEDVALUE( ModelLabels[Model] )
+			RETURN
+			    IF(
+			        valmodel = "Current Price", "--",
+			        IF(
+			            ISBLANK(pct), "N/M",
+			            FORMAT( pct, "+0.0%;-0.0%;0.0%" ) & " vs price"
+			        )
+			    )
+		lineageTag: 2a28038d-1b72-43ff-9ae2-cfb32d26dde4
+
+	measure 'Assumption Value' =
+			
+			SWITCH(
+			    SELECTEDVALUE( AssumptionLabels[Assumption] ),
+			    "DCF growth rate",      FORMAT( SELECTEDVALUE( Results[dcf_growth_rate] ),      "0.0%" ),
+			    "Terminal growth rate", FORMAT( SELECTEDVALUE( Results[dcf_terminal_rate] ),    "0.0%" ),
+			    "EPS (TTM)",            FORMAT( SELECTEDVALUE( ValInput[eps_ttm] ),             "$#,##0.00" ),
+			    "Beta",                 FORMAT( SELECTEDVALUE( ValInput[beta] ),                "0.00" ),
+			    "--"
+			)
+		lineageTag: c77226e7-1f9c-4cac-a765-a1b372f7e046
+
+	measure 'DCF Assumption Value' =
+			
+			SWITCH(
+			    SELECTEDVALUE( DCFAssumptionLabels[Assumption] ),
+			    "FCF base ($M)",        FORMAT( SELECTEDVALUE( Results[dcf_fcf_base_m] ),      "$#,##0" ),
+			    "Growth rate",          FORMAT( SELECTEDVALUE( Results[dcf_growth_rate] ),     "0.0%" ),
+			    "Discount rate (WACC)", FORMAT( SELECTEDVALUE( Results[dcf_discount_rate] ),   "0.0%" ),
+			    "Terminal growth rate", FORMAT( SELECTEDVALUE( Results[dcf_terminal_rate] ),   "0.0%" ),
+			    "Shares outstanding",   FORMAT( SELECTEDVALUE( ValInput[shares_outstanding] ), "#,##0M" ),
+			    "--"
+			)
+		lineageTag: bf049267-e13a-4ee6-9cec-09d61c6a7cf2
+
+	measure 'DCF Terminal Value' =
+			
+			VAR dcf       = SELECTEDVALUE( Results[dcf_value] )
+			VAR shares    = SELECTEDVALUE( ValInput[shares_outstanding] )
+			VAR fcfBase   = SELECTEDVALUE( Results[dcf_fcf_base_m] )
+			VAR growth    = SELECTEDVALUE( Results[dcf_growth_rate] )
+			VAR discount  = SELECTEDVALUE( Results[dcf_discount_rate] )
+			VAR termRate  = SELECTEDVALUE( Results[dcf_terminal_rate] )
+			RETURN
+			    DIVIDE(
+			        fcfBase * POWER( 1 + growth, 10 ) * ( 1 + termRate ),
+			        ( discount - termRate ) * POWER( 1 + discount, 10 )
+			    )
+		lineageTag: 8ad605e5-9872-40e8-8610-0aed1765cdce
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF Total PV of FCFs' =
+			
+			VAR base     = SELECTEDVALUE( Results[dcf_fcf_base_m] )
+			VAR growth   = SELECTEDVALUE( Results[dcf_growth_rate] )
+			VAR discount = SELECTEDVALUE( Results[dcf_discount_rate] )
+			RETURN
+			    SUMX(
+			        GENERATESERIES( 1, 10, 1 ),
+			        ROUND(
+			            base * POWER( 1 + growth, [Value] ) * POWER( 1 / ( 1 + discount ), [Value] ),
+			            0
+			        )
+			    )
+		lineageTag: 9e664d52-6f17-4c8c-b250-10968e851ac3
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF Intrinsic Value Per Share' =
+			
+			SELECTEDVALUE( Results[dcf_value] )
+		lineageTag: cea384c8-cced-4c32-aa7a-d63d47e34654
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'DCF Projection Value' = ```
+			
+			VAR selectedRow   = SELECTEDVALUE( DCFProjectionRows[RowLabel] )
+			VAR selectedYear  = SELECTEDVALUE( DCF_Projection[year] )
+			VAR selectedTicker = SELECTEDVALUE( Results[ticker] )
+			VAR fcf  = CALCULATE( 
+			    SUM( DCF_Projection[fcf_forecast_m] ),
+			    DCF_Projection[year] = selectedYear,
+			    DCF_Projection[ticker] = selectedTicker
+			)
+			VAR pv   = CALCULATE( 
+			    SUM( DCF_Projection[pv_fcf_m] ),
+			    DCF_Projection[year] = selectedYear,
+			    DCF_Projection[ticker] = selectedTicker
+			)
+			VAR df   = CALCULATE( 
+			    SUM( DCF_Projection[discount_factor] ),
+			    DCF_Projection[year] = selectedYear,
+			    DCF_Projection[ticker] = selectedTicker
+			)
+			RETURN
+			SWITCH(
+			    selectedRow,
+			    "FCF",             FORMAT( fcf, "#,##0" ),
+			    "Discount Factor", FORMAT( df,  "0.000" ),
+			    "PV of FCF",       FORMAT( pv,  "#,##0" ),
+			    "--"
+			)
+			```
+		lineageTag: 91aa2ca6-fa5e-4b87-9f52-3dbc898ae724
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,36 @@
+relationship AutoDetected_cbde509a-f176-4cc7-8ab5-bd041e3f5bf2
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: ValInput.ticker
+	toColumn: Results.ticker
+
+relationship AutoDetected_1d7c66d1-2ed2-4249-89b0-67f0b64e2567
+	fromColumn: FCF_History.ticker
+	toColumn: Results.ticker
+
+relationship AutoDetected_94d13104-79f1-469b-b1ae-3dbec3d61ae2
+	fromColumn: Dividends_History.ticker
+	toColumn: Results.ticker
+
+relationship AutoDetected_d4e76dd0-b874-492a-b1c6-bdf38948a7f5
+	fromColumn: Comps.ticker
+	toColumn: Results.ticker
+
+relationship AutoDetected_93177649-a389-4a4f-974e-66c3c8a674b8
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: ValInput.fcf_2007
+	toColumn: FCF_History.FCF
+
+relationship AutoDetected_edd7edeb-f515-4d64-88db-ab4e5be9bfd8
+	isActive: false
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: ValInput.comp_1_ticker
+	toColumn: Comps.comp_ticker
+
+relationship AutoDetected_c3f279ab-354e-464f-b2b0-6d95f443ef78
+	fromColumn: DCF_Projection.ticker
+	toColumn: Results.ticker
+

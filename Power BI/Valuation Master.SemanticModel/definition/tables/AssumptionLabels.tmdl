@@ -1,0 +1,37 @@
+table AssumptionLabels
+	lineageTag: 8c69fae4-446b-413d-bbb7-221c733fb0f7
+
+	column Assumption
+		lineageTag: d2195387-9c67-4fe5-b46c-a2564a52b16a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Assumption]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: ea579294-3ac2-44cb-8344-4846d7ced1fd
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AssumptionLabels = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Assumption", STRING,
+				    "SortOrder", INTEGER,
+				    {
+				        { "DCF growth rate",     1 },
+				        { "Terminal growth rate",2 },
+				        { "EPS (TTM)",           3 },
+				        { "Beta",                4 }
+				    }
+				)
+
+	annotation PBI_Id = 051cf6908cce426088ce50cbd97ae61d
+

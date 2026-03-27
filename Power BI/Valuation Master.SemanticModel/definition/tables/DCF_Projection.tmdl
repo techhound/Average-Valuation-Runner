@@ -1,0 +1,136 @@
+table DCF_Projection
+	lineageTag: 4fbb0d8b-92a3-4acd-ba91-8e94df266ede
+
+	column ticker
+		dataType: string
+		lineageTag: d9948129-24b2-4668-bf5c-a55ad090c37c
+		summarizeBy: none
+		sourceColumn: ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 83478a63-6388-4a6f-9847-41c768598331
+		summarizeBy: sum
+		sourceColumn: base_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_index
+		dataType: int64
+		formatString: 0
+		lineageTag: b6dd2f5d-5741-402c-ac83-f215ba188a80
+		summarizeBy: sum
+		sourceColumn: year_index
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 55015832-531a-4af0-9093-243c437e6da1
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column fcf_forecast_m
+		dataType: double
+		lineageTag: 25718b62-c2d3-4418-b22a-7c8ff41c7e76
+		summarizeBy: sum
+		sourceColumn: fcf_forecast_m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pv_fcf_m
+		dataType: double
+		lineageTag: dbd1935b-34cf-4794-a848-350294221b95
+		summarizeBy: sum
+		sourceColumn: pv_fcf_m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column discount_factor
+		dataType: double
+		lineageTag: 706ed26d-b211-41ae-908d-074b8aedd72a
+		summarizeBy: sum
+		sourceColumn: discount_factor
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column growth_rate
+		dataType: double
+		lineageTag: 21a812cc-2cc7-48ab-831b-3d1de529f160
+		summarizeBy: sum
+		sourceColumn: growth_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column discount_rate
+		dataType: double
+		lineageTag: df0d06f3-d690-4fbc-9d76-e280e85c94f3
+		summarizeBy: sum
+		sourceColumn: discount_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column terminal_growth_rate
+		dataType: double
+		lineageTag: 6372c226-639f-4097-905c-56324e509f7f
+		summarizeBy: sum
+		sourceColumn: terminal_growth_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column fcf_base_m
+		dataType: int64
+		formatString: 0
+		lineageTag: 41ceb9e3-4b57-4008-afc2-fa05af795062
+		summarizeBy: sum
+		sourceColumn: fcf_base_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column terminal_value_m
+		dataType: double
+		lineageTag: 8b10059a-b04e-41bd-b6fe-4ecfab2d77ee
+		summarizeBy: sum
+		sourceColumn: terminal_value_m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition DCF_Projection = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files("D:\jjcoc\Projects\Finance\Valuation\output\wisesheets_forecasted"),
+				    #"Filtered Hidden Files1" = Table.SelectRows(Source, each [Attributes]?[Hidden]? <> true),
+				    #"Invoke Custom Function1" = Table.AddColumn(#"Filtered Hidden Files1", "Transform File (4)", each #"Transform File (4)"([Content])),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Invoke Custom Function1", {"Name", "Source.Name"}),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Renamed Columns1", {"Source.Name", "Transform File (4)"}),
+				    #"Expanded Table Column1" = Table.ExpandTableColumn(#"Removed Other Columns1", "Transform File (4)", Table.ColumnNames(#"Transform File (4)"(#"Sample File (4)"))),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Expanded Table Column1",{{"Source.Name", type text}, {"ticker", type text}, {"base_year", Int64.Type}, {"year_index", Int64.Type}, {"year", Int64.Type}, {"fcf_forecast_m", type number}, {"pv_fcf_m", type number}, {"discount_factor", type number}, {"growth_rate", type number}, {"discount_rate", type number}, {"terminal_growth_rate", type number}, {"fcf_base_m", Int64.Type}, {"terminal_value_m", type number}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Source.Name"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

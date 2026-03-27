@@ -1,0 +1,172 @@
+expression Parameter1 = #"Sample File" meta [IsParameterQuery=true, BinaryIdentifier=#"Sample File", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 7bc1826a-b070-4b4f-9f06-9c05d8dc34b9
+	queryGroup: 'Transform File from wisesheets_results\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression Parameter2 = #"Sample File (2)" meta [IsParameterQuery=true, BinaryIdentifier=#"Sample File (2)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 94398fa8-bad4-4000-9c40-813dd60990de
+	queryGroup: 'Transform File from wisesheets_valinput\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Sample File' =
+		let
+		    Source = Folder.Files("D:\jjcoc\Projects\Finance\Valuation\output\wisesheets_results"),
+		    Navigation1 = Source{0}[Content]
+		in
+		    Navigation1
+	lineageTag: 63c29321-34fd-4744-80da-91b3fa830ba9
+	queryGroup: 'Transform File from wisesheets_results\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform Sample File' =
+		let
+		    Source = Csv.Document(Parameter1,[Delimiter=",", Columns=37, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+	lineageTag: 0775b1c9-4dca-4dff-ace4-0683e2830337
+	queryGroup: 'Transform File from wisesheets_results'
+
+	annotation PBI_ResultType = Table
+
+expression 'Transform File' =
+		let
+		    Source = (Parameter1 as binary) => let
+		    Source = Csv.Document(Parameter1,[Delimiter=",", Columns=37, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+		in
+		    Source
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transform Sample File""}" ]
+	lineageTag: 15c66388-582d-4b7d-a2f2-e6f59736c49d
+	queryGroup: 'Transform File from wisesheets_results\Helper Queries'
+
+	annotation PBI_ResultType = Function
+
+expression 'Sample File (2)' =
+		let
+		    Source = Folder.Files("D:\jjcoc\Projects\Finance\Valuation\output\wisesheets_valinput"),
+		    Navigation1 = Source{0}[Content]
+		in
+		    Navigation1
+	lineageTag: a53c7e7b-8663-4a47-b17d-7a133a2c7233
+	queryGroup: 'Transform File from wisesheets_valinput\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform Sample File (2)' =
+		let
+		    Source = Csv.Document(Parameter2,[Delimiter=",", Columns=73, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+	lineageTag: 84d94d23-ef5c-4e33-a1b6-28737cb689c5
+	queryGroup: 'Transform File from wisesheets_valinput'
+
+	annotation PBI_ResultType = Table
+
+expression 'Transform File (2)' =
+		let
+		    Source = (Parameter2 as binary) => let
+		    Source = Csv.Document(Parameter2,[Delimiter=",", Columns=73, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+		in
+		    Source
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transform Sample File (2)""}" ]
+	lineageTag: 9f154b28-6984-4aef-aee5-72f09a1eaa0d
+	queryGroup: 'Transform File from wisesheets_valinput\Helper Queries'
+
+	annotation PBI_ResultType = Function
+
+expression Parameter3 = #"Sample File (3)" meta [IsParameterQuery=true, BinaryIdentifier=#"Sample File (3)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: 4c11e8ce-1d8a-4243-8749-b624be958772
+	queryGroup: 'Transform File from wisesheets_results (2)\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Sample File (3)' =
+		let
+		    Source = Folder.Files("D:\jjcoc\Projects\Finance\Valuation\output\wisesheets_results"),
+		    Navigation1 = Source{0}[Content]
+		in
+		    Navigation1
+	lineageTag: ab36a987-84e4-4db5-b57c-47dff73cf7b2
+	queryGroup: 'Transform File from wisesheets_results (2)\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform Sample File (3)' =
+		let
+		    Source = Csv.Document(Parameter3,[Delimiter=",", Columns=47, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+	lineageTag: 5a9d36e3-6057-4997-ad8b-7a50a08b4617
+	queryGroup: 'Transform File from wisesheets_results (2)'
+
+	annotation PBI_ResultType = Table
+
+expression 'Transform File (3)' =
+		let
+		    Source = (Parameter3 as binary) => let
+		    Source = Csv.Document(Parameter3,[Delimiter=",", Columns=47, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+		in
+		    Source
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transform Sample File (3)""}" ]
+	lineageTag: 82254f22-ddba-406b-9bb8-2be1b7b744f0
+	queryGroup: 'Transform File from wisesheets_results (2)\Helper Queries'
+
+	annotation PBI_ResultType = Function
+
+expression Parameter4 = #"Sample File (4)" meta [IsParameterQuery=true, BinaryIdentifier=#"Sample File (4)", Type="Binary", IsParameterQueryRequired=true]
+	lineageTag: b5139fd2-3460-4b56-9ac2-973f0b8061c2
+	queryGroup: 'Transform File from wisesheets_forecasted\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform Sample File (4)' =
+		let
+		    Source = Csv.Document(Parameter4,[Delimiter=",", Columns=12, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+	lineageTag: d5ffbb4a-211d-4990-8b0e-17d00c58d513
+	queryGroup: 'Transform File from wisesheets_forecasted'
+
+	annotation PBI_ResultType = Table
+
+expression 'Sample File (4)' =
+		let
+		    Source = Folder.Files("D:\jjcoc\Projects\Finance\Valuation\output\wisesheets_forecasted"),
+		    Navigation1 = Source{0}[Content]
+		in
+		    Navigation1
+	lineageTag: 070c9008-7689-4086-87be-4f23fb703e3f
+	queryGroup: 'Transform File from wisesheets_forecasted\Helper Queries'
+
+	annotation PBI_ResultType = Binary
+
+expression 'Transform File (4)' =
+		let
+		    Source = (Parameter4 as binary) => let
+		    Source = Csv.Document(Parameter4,[Delimiter=",", Columns=12, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+		    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true])
+		in
+		    #"Promoted Headers"
+		in
+		    Source
+	mAttributes: [ FunctionQueryBinding = "{""exemplarFormulaName"":""Transform Sample File (4)""}" ]
+	lineageTag: e056dbba-f226-4820-a2cd-cce98f4cb125
+	queryGroup: 'Transform File from wisesheets_forecasted\Helper Queries'
+
+	annotation PBI_ResultType = Function
+

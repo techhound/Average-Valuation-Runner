@@ -1,0 +1,38 @@
+table ModelLabels
+	lineageTag: 963b181c-2741-4945-a5b0-454a7ca4feb4
+
+	column Model
+		lineageTag: 77b5ad07-c9ae-4530-a2d3-d373c580f0f5
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Model]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: b051b8c0-1f27-465c-9325-ef0e3fe69483
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ModelLabels = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Model", STRING,
+				    "SortOrder", INTEGER,
+				    {
+				        { "Current Price", 1 },
+				        { "DCF",           2 },
+				        { "Graham",        3 },
+				        { "Multiples",     4 },
+				        { "DDM",           5 }
+				    }
+				)
+
+	annotation PBI_Id = 19af6228658b44a5ae6d5bf73316478f
+

@@ -1,0 +1,39 @@
+table DCFAssumptionLabels
+	lineageTag: 0395e2cc-0e75-4951-a86d-9addaec2c628
+
+	column Assumption
+		lineageTag: 7c2415d9-d923-4e52-a344-cc641464c06c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Assumption]
+		sortByColumn: SortOrder
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: 68b6a83e-da19-45c5-b716-abb4a0e0d54c
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DCFAssumptionLabels = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "Assumption", STRING,
+				    "SortOrder", INTEGER,
+				    {
+				        { "FCF base ($M)",        1 },
+				        { "Growth rate",          2 },
+				        { "Discount rate (WACC)", 3 },
+				        { "Terminal growth rate", 4 },
+				        { "Shares outstanding",   5 }
+				    }
+				)
+
+	annotation PBI_Id = 8cb2c3c9ff184f8b8cc6c792bfdf0217
+

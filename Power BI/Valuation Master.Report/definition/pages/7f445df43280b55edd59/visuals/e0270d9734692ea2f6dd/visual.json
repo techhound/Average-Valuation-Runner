@@ -1,0 +1,97 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.6.0/schema.json",
+  "name": "e0270d9734692ea2f6dd",
+  "position": {
+    "x": 117.86405867823123,
+    "y": 31.915550978372835,
+    "z": 0,
+    "height": 300,
+    "width": 300
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "ValInput"
+                    }
+                  },
+                  "Property": "ticker"
+                }
+              },
+              "queryRef": "ValInput.ticker",
+              "nativeQueryRef": "ticker"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "ValInput"
+                        }
+                      },
+                      "Property": "wacc"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(ValInput.wacc)",
+              "nativeQueryRef": "Sum of wacc"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Results"
+                        }
+                      },
+                      "Property": "dcf_discount_rate"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(Results.dcf_discount_rate)",
+              "nativeQueryRef": "Sum of dcf_discount_rate"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Aggregation": {
+                "Expression": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "ValInput"
+                      }
+                    },
+                    "Property": "wacc"
+                  }
+                },
+                "Function": 0
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

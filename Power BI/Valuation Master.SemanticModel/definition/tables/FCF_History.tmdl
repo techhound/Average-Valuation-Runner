@@ -1,0 +1,82 @@
+table FCF_History
+	lineageTag: 9c67091e-c2a4-4112-9866-e42748dd3016
+
+	column ticker
+		dataType: string
+		lineageTag: b1fd78a0-b11d-415c-a9c7-a73c490d6847
+		summarizeBy: none
+		sourceColumn: ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column FCF
+		dataType: double
+		lineageTag: ca98ed66-d16d-4fb1-8d5b-2e117f60ee18
+		summarizeBy: sum
+		sourceColumn: FCF
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 8a8dbf97-79c0-4b4f-a66e-17d8ab1c07d3
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FCF Historical' = IF( FCF_History[Year] <= 2023, FCF_History[FCF], BLANK() )
+		lineageTag: 10b6087b-7a35-4d16-8e2e-04fc37c92ff8
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'FCF Projected' = IF( FCF_History[Year] >= 2024, FCF_History[FCF], BLANK() )
+		lineageTag: 70f630f5-648e-4dd3-989e-98c7dc32b8b4
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition FCF_History = m
+		mode: import
+		source =
+				let
+				    Source = ValInput,
+				    KeepCols = Table.SelectColumns(
+				        Source,
+				        {"ticker"} &
+				        List.Select(
+				            Table.ColumnNames(Source),
+				            each Text.StartsWith(_, "fcf_") and _ <> "fcf_growth_rate"
+				        )
+				    ),
+				    Unpivot = Table.UnpivotOtherColumns(KeepCols, {"ticker"}, "YearCol", "FCF"),
+				    AddYear = Table.AddColumn(
+				        Unpivot,
+				        "Year",
+				        each Number.FromText(Text.AfterDelimiter([YearCol], "_")),
+				        Int64.Type
+				    ),
+				    RemoveYearCol = Table.RemoveColumns(AddYear, {"YearCol"}),
+				    FilterNulls = Table.SelectRows(
+				        RemoveYearCol,
+				        each [FCF] <> null and [FCF] <> ""
+				    ),
+				    ChangeTypes = Table.TransformColumnTypes(
+				        FilterNulls,
+				        {{"FCF", type number}}
+				    )
+				in
+				    ChangeTypes
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

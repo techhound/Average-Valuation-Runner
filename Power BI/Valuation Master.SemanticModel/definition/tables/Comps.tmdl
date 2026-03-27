@@ -1,0 +1,125 @@
+table Comps
+	lineageTag: 163497d2-4c6b-422f-9e04-513adb315c3d
+
+	column ticker
+		dataType: string
+		lineageTag: 69128d4c-64d8-41e4-a591-a06dfd966f99
+		summarizeBy: none
+		sourceColumn: ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column CompRank
+		dataType: int64
+		formatString: 0
+		lineageTag: 76606b25-74d4-4c3d-92d3-7b847c80ba46
+		summarizeBy: sum
+		sourceColumn: CompRank
+
+		annotation SummarizationSetBy = Automatic
+
+	column comp_ticker
+		dataType: string
+		lineageTag: 62f9431b-7446-41ab-b7d3-47f3e91cf0b3
+		summarizeBy: none
+		sourceColumn: comp_ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column comp_name
+		dataType: string
+		lineageTag: 5773bd42-7e53-4d64-bc9e-880fb571edfc
+		summarizeBy: none
+		sourceColumn: comp_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column comp_price
+		dataType: double
+		lineageTag: a88bac7c-c9b7-438b-a300-c8af5e916bdf
+		summarizeBy: sum
+		sourceColumn: comp_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column comp_eps
+		dataType: double
+		lineageTag: 13160625-0b36-4d7e-adff-aa7046da3560
+		summarizeBy: sum
+		sourceColumn: comp_eps
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PE_Multiple
+		dataType: double
+		lineageTag: 633239c0-06d2-4ace-b690-95d2dfaac9e5
+		summarizeBy: sum
+		sourceColumn: PE_Multiple
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Comps = m
+		mode: import
+		source =
+				let
+				    Source = ValInput,
+				    KeepCols = Table.SelectColumns(
+				        Source,
+				        {"ticker"} &
+				        List.Select(
+				            Table.ColumnNames(Source),
+				            each Text.StartsWith(_, "comp_")
+				        )
+				    ),
+				    Unpivot = Table.UnpivotOtherColumns(KeepCols, {"ticker"}, "CompCol", "Value"),
+				    AddRank = Table.AddColumn(
+				        Unpivot,
+				        "CompRank",
+				        each Number.FromText(Text.Middle([CompCol], 5, 1)),
+				        Int64.Type
+				    ),
+				    // Prefix the field name with "comp_" to avoid collision with parent ticker column
+				    AddField = Table.AddColumn(
+				        AddRank,
+				        "Field",
+				        each "comp_" & Text.AfterDelimiter([CompCol], "_", {0, RelativePosition.FromEnd}),
+				        type text
+				    ),
+				    RemoveCompCol = Table.RemoveColumns(AddField, {"CompCol"}),
+				    Pivot = Table.Pivot(
+				        RemoveCompCol,
+				        {"comp_ticker", "comp_name", "comp_price", "comp_eps"},
+				        "Field",
+				        "Value"
+				    ),
+				    FilterNulls = Table.SelectRows(
+				        Pivot,
+				        each [comp_ticker] <> null and [comp_ticker] <> ""
+				    ),
+				    ChangeTypes = Table.TransformColumnTypes(
+				        FilterNulls,
+				        {
+				            {"CompRank", Int64.Type},
+				            {"comp_price", type number},
+				            {"comp_eps", type number}
+				        }
+				    ),
+				    AddPE = Table.AddColumn(
+				        ChangeTypes,
+				        "PE_Multiple",
+				        each if [comp_eps] = null or [comp_eps] = 0 then null else [comp_price] / [comp_eps],
+				        type number
+				    )
+				in
+				    AddPE
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

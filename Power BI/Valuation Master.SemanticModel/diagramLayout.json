@@ -1,0 +1,159 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 1470.4000244140625,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1186,
+            "y": -37
+          },
+          "nodeIndex": "Results",
+          "nodeLineageTag": "ba80546f-e1fc-4a64-9d6d-47ddd110ffbc",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 902,
+            "y": -37
+          },
+          "nodeIndex": "ValInput",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 39
+          },
+          "nodeIndex": "Comps",
+          "nodeLineageTag": "163497d2-4c6b-422f-9e04-513adb315c3d",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 87
+          },
+          "nodeIndex": "Dividends_History",
+          "nodeLineageTag": "e1a34e5f-d652-4bf4-9e33-752844e79e8c",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 568,
+            "y": 87
+          },
+          "nodeIndex": "FCF_History",
+          "nodeLineageTag": "9c67091e-c2a4-4112-9866-e42748dd3016",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1470,
+            "y": 123
+          },
+          "nodeIndex": "_Measures",
+          "nodeLineageTag": "3bb61817-54b6-411b-ba46-1665d339e7e6",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1754,
+            "y": 75
+          },
+          "nodeIndex": "ModelLabels",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2038,
+            "y": 75
+          },
+          "nodeIndex": "AssumptionLabels",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2322,
+            "y": 75
+          },
+          "nodeIndex": "DCFAssumptionLabels",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2890,
+            "y": 81
+          },
+          "nodeIndex": "DCFProjectionRows",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2606,
+            "y": 25
+          },
+          "nodeIndex": "DCF_Projection",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

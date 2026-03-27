@@ -1,0 +1,36 @@
+table DCFProjectionRows
+	lineageTag: 48d7ef0f-4970-4ca3-844e-be2b8d035130
+
+	column RowLabel
+		lineageTag: 3d031001-a7b4-4f70-b3a8-f795e23a2e4b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [RowLabel]
+
+		annotation SummarizationSetBy = Automatic
+
+	column SortOrder
+		formatString: 0
+		lineageTag: 6165d030-c88e-44d5-bf37-63ef3d127a85
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [SortOrder]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DCFProjectionRows = calculated
+		mode: import
+		source =
+				
+				DATATABLE(
+				    "RowLabel", STRING,
+				    "SortOrder", INTEGER,
+				    {
+				        { "FCF",             1 },
+				        { "Discount Factor", 2 },
+				        { "PV of FCF",       3 }
+				    }
+				)
+
+	annotation PBI_Id = a1d476afa6e1489397f873572ad099d8
+

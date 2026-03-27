@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Valuation Master"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "17438d6f-850c-4559-915e-2bce313a551b"
+  }
+}

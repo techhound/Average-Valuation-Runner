@@ -1,0 +1,365 @@
+table Results
+	lineageTag: ba80546f-e1fc-4a64-9d6d-47ddd110ffbc
+
+	column ticker
+		dataType: string
+		lineageTag: 94a773a7-cc37-46c4-b128-bc828bdd1707
+		summarizeBy: none
+		sourceColumn: ticker
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_name
+		dataType: string
+		lineageTag: 9bd0a190-371e-4dc7-b696-bee6f9fadd78
+		summarizeBy: none
+		sourceColumn: company_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column sector
+		dataType: string
+		lineageTag: 783e8749-6ac6-4ab9-a489-ff739eaeb68b
+		summarizeBy: none
+		sourceColumn: sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column industry
+		dataType: string
+		lineageTag: 87c1fbad-a35e-475c-b5f1-c325a1431aa4
+		summarizeBy: none
+		sourceColumn: industry
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_source
+		dataType: string
+		lineageTag: 68a6f701-0a44-44f8-b2cf-e5fb1024a27e
+		summarizeBy: none
+		sourceColumn: data_source
+
+		annotation SummarizationSetBy = Automatic
+
+	column run_timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3ec8e921-ff77-42c3-9b9d-ecf97b132e38
+		summarizeBy: none
+		sourceColumn: run_timestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column current_price
+		dataType: double
+		lineageTag: 07b8bb9f-ce13-433c-bd4b-d169af1d4c41
+		summarizeBy: sum
+		sourceColumn: current_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column market_cap_m
+		dataType: double
+		lineageTag: 4bf08935-7dc0-4e9a-880e-f60b79ba602d
+		summarizeBy: sum
+		sourceColumn: market_cap_m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column shares_outstanding_m
+		dataType: double
+		lineageTag: 36cf448b-4183-4e16-b5b5-a9690228f8cc
+		summarizeBy: sum
+		sourceColumn: shares_outstanding_m
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dcf_value
+		dataType: double
+		lineageTag: 274379de-7716-47fa-8bef-2df2788d15ba
+		summarizeBy: sum
+		sourceColumn: dcf_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column graham_value
+		dataType: double
+		lineageTag: bcff6472-a991-43ca-bf87-e621588e65ea
+		summarizeBy: sum
+		sourceColumn: graham_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiples_value
+		dataType: double
+		lineageTag: 4d4cd551-184a-4e5e-9a31-f41098a3871f
+		summarizeBy: sum
+		sourceColumn: multiples_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ddm_value
+		dataType: double
+		lineageTag: d915caad-a307-4bf2-8c97-4f24404c98e0
+		summarizeBy: sum
+		sourceColumn: ddm_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dcf_error
+		dataType: string
+		lineageTag: daa247b0-029d-4b84-a299-46bd9168a821
+		summarizeBy: none
+		sourceColumn: dcf_error
+
+		annotation SummarizationSetBy = Automatic
+
+	column graham_error
+		dataType: string
+		lineageTag: 18868347-1565-457b-bacf-038ea55818b9
+		summarizeBy: none
+		sourceColumn: graham_error
+
+		annotation SummarizationSetBy = Automatic
+
+	column multiples_error
+		dataType: string
+		lineageTag: c9cb0879-3526-473a-bff5-6c0b183f2400
+		summarizeBy: none
+		sourceColumn: multiples_error
+
+		annotation SummarizationSetBy = Automatic
+
+	column ddm_error
+		dataType: string
+		lineageTag: 4dcbeb02-4a24-4f43-a4d6-b77f3b7b7811
+		summarizeBy: none
+		sourceColumn: ddm_error
+
+		annotation SummarizationSetBy = Automatic
+
+	column intrinsic_value_avg
+		dataType: double
+		lineageTag: 14d2df62-97db-4ac0-be5e-f7945fe2a835
+		summarizeBy: sum
+		sourceColumn: intrinsic_value_avg
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column intrinsic_value_median
+		dataType: double
+		lineageTag: 629d25bf-e7b8-4624-b63e-0bed07fed9e9
+		summarizeBy: sum
+		sourceColumn: intrinsic_value_median
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column models_used
+		dataType: int64
+		formatString: 0
+		lineageTag: 8ed038dc-69a2-4b55-90ae-de61cd6cb1d2
+		summarizeBy: sum
+		sourceColumn: models_used
+
+		annotation SummarizationSetBy = Automatic
+
+	column margin_of_safety
+		dataType: double
+		lineageTag: 4f559c95-76a2-4756-8d9c-1b2f0e575ea1
+		summarizeBy: sum
+		sourceColumn: margin_of_safety
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column acceptable_buy_price
+		dataType: double
+		lineageTag: 0085f880-f107-4875-b1be-3ea1217b3b51
+		summarizeBy: sum
+		sourceColumn: acceptable_buy_price
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column upside_to_intrinsic_pct
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 2c9f28b3-e6ca-4f89-8bf1-5766358b68be
+		summarizeBy: sum
+		sourceColumn: upside_to_intrinsic_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column signal
+		dataType: string
+		lineageTag: 332a665c-c01e-4ea8-b8cb-62655a17fc30
+		summarizeBy: none
+		sourceColumn: signal
+
+		annotation SummarizationSetBy = Automatic
+
+	column dcf_growth_rate
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 1b4d2bf6-9923-495c-a9dc-7d84cee9d053
+		summarizeBy: sum
+		sourceColumn: dcf_growth_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	column dcf_discount_rate
+		dataType: double
+		lineageTag: 735554fb-90a1-46a7-8f8e-99e5892ae3ed
+		summarizeBy: sum
+		sourceColumn: dcf_discount_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dcf_terminal_rate
+		dataType: double
+		lineageTag: 022a78ec-057d-4de1-a87d-033d23a95edd
+		summarizeBy: sum
+		sourceColumn: dcf_terminal_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dcf_fcf_base_m
+		dataType: int64
+		formatString: 0
+		lineageTag: 1cbf23f1-7706-4628-9db0-64abcae90f2c
+		summarizeBy: sum
+		sourceColumn: dcf_fcf_base_m
+
+		annotation SummarizationSetBy = Automatic
+
+	column graham_eps
+		dataType: double
+		lineageTag: ea6be7f8-dba7-4325-9a1f-360378ca1cac
+		summarizeBy: sum
+		sourceColumn: graham_eps
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column graham_growth_pct
+		dataType: int64
+		formatString: 0
+		lineageTag: 1b3fa9c2-e9f5-4c18-8674-0ce0a391d08e
+		summarizeBy: sum
+		sourceColumn: graham_growth_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column graham_aaa_yield_pct
+		dataType: double
+		lineageTag: debf024e-9656-4378-8c00-6327157a1caa
+		summarizeBy: sum
+		sourceColumn: graham_aaa_yield_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiples_avg_pe
+		dataType: double
+		lineageTag: ec4d5e2e-2306-45d0-95b6-5889e2d25913
+		summarizeBy: sum
+		sourceColumn: multiples_avg_pe
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiples_median_pe
+		dataType: double
+		lineageTag: 6513661a-6dca-4a55-a22f-c2aad5db9936
+		summarizeBy: sum
+		sourceColumn: multiples_median_pe
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column multiples_n_comps
+		dataType: int64
+		formatString: 0
+		lineageTag: 876cab5c-52ab-4c9b-a077-403e9a848aa0
+		summarizeBy: sum
+		sourceColumn: multiples_n_comps
+
+		annotation SummarizationSetBy = Automatic
+
+	column ddm_d0
+		dataType: double
+		lineageTag: 68d0cd51-caf4-4c83-9dae-78095759b7ee
+		summarizeBy: sum
+		sourceColumn: ddm_d0
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ddm_growth_rate
+		dataType: double
+		lineageTag: 5eef5bb2-bfaf-495a-bc00-32b442cf9ceb
+		summarizeBy: sum
+		sourceColumn: ddm_growth_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ddm_discount_rate
+		dataType: double
+		lineageTag: 76eca19c-f9d2-435c-8c3e-4aa1c2cb8480
+		summarizeBy: sum
+		sourceColumn: ddm_discount_rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Results = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files("D:\jjcoc\Projects\Finance\Valuation\output\wisesheets_results"),
+				    #"Filtered Hidden Files1" = Table.SelectRows(Source, each [Attributes]?[Hidden]? <> true),
+				    #"Invoke Custom Function1" = Table.AddColumn(#"Filtered Hidden Files1", "Transform File", each #"Transform File"([Content])),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Invoke Custom Function1", {"Name", "Source.Name"}),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Renamed Columns1", {"Source.Name", "Transform File"}),
+				    #"Expanded Table Column1" = Table.ExpandTableColumn(#"Removed Other Columns1", "Transform File", Table.ColumnNames(#"Transform File"(#"Sample File"))),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Expanded Table Column1",{{"Source.Name", type text}, {"ticker", type text}, {"company_name", type text}, {"sector", type text}, {"industry", type text}, {"data_source", type text}, {"run_timestamp", type datetime}, {"current_price", type number}, {"market_cap_m", type number}, {"shares_outstanding_m", type number}, {"dcf_value", type number}, {"graham_value", type number}, {"multiples_value", type number}, {"ddm_value", type number}, {"dcf_error", type any}, {"graham_error", type any}, {"multiples_error", type any}, {"ddm_error", type text}, {"intrinsic_value_avg", type number}, {"intrinsic_value_median", type number}, {"models_used", Int64.Type}, {"margin_of_safety", type number}, {"acceptable_buy_price", type number}, {"upside_to_intrinsic_pct", type number}, {"signal", type text}, {"dcf_growth_rate", type number}, {"dcf_discount_rate", type number}, {"dcf_terminal_rate", type number}, {"dcf_fcf_base_m", Int64.Type}, {"graham_eps", type number}, {"graham_growth_pct", Int64.Type}, {"graham_aaa_yield_pct", type number}, {"multiples_avg_pe", type number}, {"multiples_median_pe", type number}, {"multiples_n_comps", Int64.Type}, {"ddm_d0", type number}, {"ddm_growth_rate", type number}, {"ddm_discount_rate", type number}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Source.Name"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
