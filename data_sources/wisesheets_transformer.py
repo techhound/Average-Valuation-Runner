@@ -292,6 +292,20 @@ def _extract_key_metrics(wb, ticker: str) -> dict:
 def _extract_fcf_history(wb) -> dict[int, float]:
     """Extract Free Cash Flow history from Cash Flow statement."""
     fcf_history = {}
+
+    # Optional: start year override from Comparables!M2
+    start_year = None
+    comp_sheet = next(
+        (s for s in wb.sheetnames if "comparable" in s.lower()),
+        None,
+    )
+    if comp_sheet:
+        try:
+            start_year_val = wb[comp_sheet].cell(2, 13).value  # M2
+            if start_year_val is not None:
+                start_year = int(float(start_year_val))
+        except (ValueError, TypeError):
+            start_year = None
     
     for sheet_name in wb.sheetnames:
         if "Cash Flow" not in sheet_name:
@@ -321,6 +335,8 @@ def _extract_fcf_history(wb) -> dict[int, float]:
             
             if year and fcf_value:
                 try:
+                    if start_year is not None and year < start_year:
+                        continue
                     # FCF values come in as actual dollars, convert to millions
                     fcf_millions = float(fcf_value) / 1_000_000
                     fcf_history[year] = fcf_millions
