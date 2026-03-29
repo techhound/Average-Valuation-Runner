@@ -1,2 +1,0 @@
-ticker,data_source,run_timestamp,dcf_growth_rate,dcf_discount_rate,dcf_terminal_rate,dcf_fcf_base_m,ddm_d0,ddm_growth_rate,ddm_discount_rate,graham_eps,graham_growth_pct,graham_aaa_yield_pct,multiples_avg_pe,multiples_median_pe,multiples_n_comps
-AVGO,wisesheets,2026-03-27T04:06:05.487907,0.3355231746342554,0.10585,0.03,26914.0,0.006522137687700238,0.043666280747133454,0.10585,4.907894736842105,8.0,4.3999999999999995,41.60106425855055,32.30856427280969,4

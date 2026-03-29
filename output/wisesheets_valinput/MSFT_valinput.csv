@@ -1,0 +1,2 @@
+ticker,company_name,sector,industry,current_price,eps_ttm,eps_growth_rate,beta,risk_free_rate,equity_risk_premium,aaa_bond_yield,terminal_growth_rate,market_cap,cash_and_equivalents,total_debt,shares_outstanding,wacc,dividend_growth_rate,fcf_growth_rate
+MSFT,MSFT,Technology,Software - Infrastructure,497.41,13.699986546481904,0,1.108,0.043,0.05,0.044,0.03,3697248.53,0,0,7432.999999999999,0,0,0

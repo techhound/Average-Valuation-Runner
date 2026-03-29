@@ -1,24 +1,30 @@
 # Average Valuation Runner
 
-This Python project creates valuations using some form of market data (Yahoo, paid processors, etc). Currently, it is using data obtain from WiseSheets.com but for future releases it will have connectors to several providers and can be configured via Settings.py (again for future release).
+This Python project creates valuations using market data. Today it supports:
+- Wisesheets Excel inputs (primary workflow)
+- Yahoo Finance (via `yfinance`) when `DATA_SOURCE = "yahoo"` in `config/settings.py`
 
-The files will be transformed into an Output directory with these subdirectories:
-- wisesheets_results
-- wisesheets_valinput (core inputs only)
-- wisesheets_cashflows (normalized historical cashflows)
-- wisesheets_dividends (normalized dividends)
-- wise_sheets_comps (normalized comparables)
-- wisesheets_forecasted
+Raw Wisesheets files are read and transformed into CSV outputs. The input Excel
+files are not modified.
 
-The input files are altered to have a Comparables sheet added with the companies that are considered comparables (for multiples valuation).
+Outputs are written under `output/`:
+- `wisesheets_results` (valuation results per ticker)
+- `wisesheets_valinput` (core valuation inputs extracted from Wisesheets)
+- `wisesheets_cashflows` (normalized historical cashflows)
+- `wisesheets_dividends` (normalized dividends)
+- `wisesheets_comps` (normalized comparables)
+- `wisesheets_forecasted` (DCF forecast rows per ticker)
+- `computed_assumptions` (model assumptions used per run)
 
-You will need a valid subscription (no attribution) to Wisesheets in order to run the Python package (or you'll need to put all the data from wherever you obtain it into the exact formats of the sample files in the data\wisesheets subfolder. As explained, for future release I intend to add other connectors.
+You will need a valid Wisesheets subscription to refresh the raw Excel data, or
+you can supply equivalent data in the exact Wisesheets template format under
+`data/wisesheets/`.
 
 # Batch Processing Wisesheets for Power BI
 
 This guide shows how to batch process all your XLSX files and export results to Power BI.
 
-In the Power BI subfolder, I included te starting (work in progress) PBIX for you to take a look. If you decide to use it as is and want to work in the Power Query to make changes, you'll need to change teh paths of the source accordingly. 
+In the Power BI subfolder, I included the starting (work in progress) PBIX for you to take a look. If you decide to use it as is and want to work in the Power Query to make changes, you'll need to change the paths of the source accordingly.
 
 ## Quick Start
 
@@ -26,19 +32,18 @@ In the Power BI subfolder, I included te starting (work in progress) PBIX for yo
 Place all your raw Wisesheets Excel files in `data/wisesheets/`:
 ```
 data/wisesheets/
-  ├── MSFT.xlsx          (raw Wisesheets format)
-  ├── AAPL.xlsx          (auto-transforms on load)
-  ├── NVDA.xlsx
-  └── GOOGL.xlsx
+  |-- MSFT.xlsx          (raw Wisesheets format)
+  |-- AAPL.xlsx          (auto-transforms on load)
+  |-- NVDA.xlsx
+  |-- GOOGL.xlsx
 ```
 
-### Process all files (combined output)
+### Process all files (per-ticker output)
 ```bash
 uv run python batch_process_wisesheets.py
 ```
 
-**Output:** `output/wisesheets_results/valuation_results_combined.csv`  
-One CSV with all stocks - import directly to Power BI.
+**Output:** one CSV per ticker in `output/wisesheets_results/`.
 
 ### Or output per-ticker for Power BI folder import
 ```bash
@@ -47,21 +52,21 @@ uv run python batch_process_wisesheets.py --separate
 
 **Output:** `output/wisesheets_results/`
 ```
-├── MSFT_valuation.csv
-├── AAPL_valuation.csv
-├── NVDA_valuation.csv
-└── GOOGL_valuation.csv
+|-- MSFT_valuation.csv
+|-- AAPL_valuation.csv
+|-- NVDA_valuation.csv
+|-- GOOGL_valuation.csv
 ```
 
 You can then:
-- Create a Power BI **folder connector** pointing to `output/wisesheets_results/`
+- Create a Power BI folder connector pointing to `output/wisesheets_results/`
 - Or manually import each CSV file
 - Or combine them in Power BI itself
 
 ## Features
 
 ### Auto-transformation
-Files in raw Wisesheets format (with Income Statement, Cash Flow, etc. sheets) are **automatically transformed** to the proper ValuationData format on first load. No manual transformation needed!
+Files in raw Wisesheets format (with Income Statement, Cash Flow, etc. sheets) are automatically transformed to the proper ValuationData CSV format on first load. No manual transformation needed.
 
 ### Customization
 
@@ -84,10 +89,10 @@ If you want to use the batch processing in code:
 from pathlib import Path
 from batch_process_wisesheets import batch_process_wisesheets
 
-# Combined output (default)
+# Per-ticker output (default)
 batch_process_wisesheets()
 
-# Separate output
+# Separate output (same behavior, explicit)
 batch_process_wisesheets(
     output_format="separate",
     output_dir=Path("my_results/"),
@@ -97,19 +102,14 @@ batch_process_wisesheets(
 
 ## Power BI Integration
 
-### Option 1: Combined CSV (recommended for simple setup)
-1. Run: `uv run python batch_process_wisesheets.py`
-2. In Power BI Desktop:  **Get Data** → **CSV** → `output/wisesheets_results/valuation_results_combined.csv`
-3. Done!
-
-### Option 2: Folder connector (recommended for ongoing updates)
+### Option 1: Folder connector (recommended for ongoing updates)
 1. Run: `uv run python batch_process_wisesheets.py --separate`
-2. In Power BI Desktop: **Get Data** → **Folder**
+2. In Power BI Desktop: Get Data -> Folder
 3. Point to: `output/wisesheets_results/`
 4. Power BI automatically combines all CSVs
 5. When you add new stocks, just re-run the script and refresh Power BI
 
-### Option 3: Manual per-file import
+### Option 2: Manual per-file import
 1. Run: `uv run python batch_process_wisesheets.py --separate`
 2. Import each CSV file individually to Power BI
 3. Combine them in the Power BI data model
@@ -125,8 +125,6 @@ cp ~/Downloads/NVDA.xlsx data/wisesheets/
 uv run python batch_process_wisesheets.py --separate
 
 # 3. In Power BI, refresh your data source pointing to output/wisesheets_results/
-# Or import the combined CSV:
-# uv run python batch_process_wisesheets.py  (for combined output)
 ```
 
 ## Output Columns
@@ -174,7 +172,7 @@ dcf_*, graham_*, multiples_*, ddm_*
 
 ## Next Steps
 
-1. **Add your Wisesheets files** to `data/wisesheets/`
-2. **Run batch processing** to generate CSVs
-3. **Import to Power BI** and create dashboards
-4. **Refresh periodically** when you add new stocks
+1. Add your Wisesheets files to `data/wisesheets/`
+2. Run batch processing to generate CSVs
+3. Import to Power BI and create dashboards
+4. Refresh periodically when you add new stocks

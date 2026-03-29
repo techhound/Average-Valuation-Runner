@@ -1,0 +1,2 @@
+ticker,company_name,sector,industry,current_price,eps_ttm,eps_growth_rate,beta,risk_free_rate,equity_risk_premium,aaa_bond_yield,terminal_growth_rate,market_cap,cash_and_equivalents,total_debt,shares_outstanding,wacc,dividend_growth_rate,fcf_growth_rate
+AMZN,AMZN,Consumer Cyclical,Internet Retail,230.82,7.288851351351352,0,1.42,0.043,0.05,0.044,0.03,2459617.92,0,0,10656.0,0,0,0
