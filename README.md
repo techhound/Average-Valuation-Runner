@@ -16,9 +16,9 @@ Outputs are written under `output/`:
 - `wisesheets_forecasted` (DCF forecast rows per ticker)
 - `computed_assumptions` (model assumptions used per run)
 
-You will need a valid Wisesheets subscription to refresh the raw Excel data, or
+**You will need a valid Wisesheets subscription to refresh the raw Excel data, or
 you can supply equivalent data in the exact Wisesheets template format under
-`data/wisesheets/`.
+`data/wisesheets/`.**
 
 # Batch Processing Wisesheets for Power BI
 
