@@ -2,6 +2,12 @@
 
 This directory (`data/wisesheets/`) stores Excel workbooks for individual stocks in Wisesheets format.
 
+NOTE: You will either need to purchase a license from Wisesheets doc come to pull data from the market or you will need to pull the data from other sources and put it into the same format as Wisesheets.
+
+This process does not include any Wisesheets. You will need to provide them yourself. 
+
+We are working on a SEC connector which is currently publicly available and free. 
+
 ## Setup
 
 1. **Place one Excel file per stock** in this directory:

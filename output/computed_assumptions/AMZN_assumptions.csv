@@ -1,2 +1,2 @@
 ticker,data_source,run_timestamp,dcf_growth_rate,dcf_discount_rate,dcf_terminal_rate,dcf_fcf_base_m,ddm_d0,ddm_growth_rate,ddm_discount_rate,graham_eps,graham_growth_pct,graham_aaa_yield_pct,multiples_avg_pe,multiples_median_pe,multiples_n_comps
-AMZN,wisesheets,2026-03-28T19:17:31.141463,0.06428451618176459,0.11399999999999999,0.03,7695.0,,,,7.288851351351352,8.0,4.3999999999999995,41.60106425855055,32.30856427280969,4
+AMZN,wisesheets,2026-03-30T03:27:34.591864,0.06428451618176459,0.11399999999999999,0.03,7695.0,,,,7.288851351351352,8.0,4.3999999999999995,41.60106425855055,32.30856427280969,4
