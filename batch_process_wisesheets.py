@@ -24,6 +24,7 @@ import math
 import sys
 import warnings
 from pathlib import Path
+import shutil
 
 import pandas as pd
 
@@ -130,10 +131,13 @@ def _write_forecast_csv(rows: list[dict], path: Path) -> None:
         return
 
     fieldnames = list(rows[0].keys())
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+    except PermissionError:
+        print(f"ERROR: Permission denied writing {path}. Close any open files and re-run.")
 
 
 def _write_cashflows_long(data, path: Path) -> None:
@@ -148,10 +152,13 @@ def _write_cashflows_long(data, path: Path) -> None:
         for year, value in sorted(data.fcf_history.items())
     ]
 
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=["ticker", "year", "fcf_m"])
-        writer.writeheader()
-        writer.writerows(rows)
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=["ticker", "year", "fcf_m"])
+            writer.writeheader()
+            writer.writerows(rows)
+    except PermissionError:
+        print(f"ERROR: Permission denied writing {path}. Close any open files and re-run.")
 
 
 def _write_computed_assumptions(summary, path: Path) -> None:
@@ -174,10 +181,13 @@ def _write_computed_assumptions(summary, path: Path) -> None:
         "multiples_n_comps": summary.multiples_n_comps,
     }
 
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(row.keys()))
-        writer.writeheader()
-        writer.writerow(row)
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=list(row.keys()))
+            writer.writeheader()
+            writer.writerow(row)
+    except PermissionError:
+        print(f"ERROR: Permission denied writing {path}. Close any open files and re-run.")
 
 
 def _extract_dividends_paid_cashflow(workbook_path: Path) -> dict[int, float]:
@@ -243,10 +253,13 @@ def _write_dividends_long(data, workbook_path: Path, path: Path) -> None:
     if not rows:
         return
 
-    with open(path, "w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=["ticker", "year", "dividends_paid_m"])
-        writer.writeheader()
-        writer.writerows(rows)
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=["ticker", "year", "dividends_paid_m"])
+            writer.writeheader()
+            writer.writerows(rows)
+    except PermissionError:
+        print(f"ERROR: Permission denied writing {path}. Close any open files and re-run.")
 
 
 def batch_process_wisesheets(
@@ -291,6 +304,7 @@ def batch_process_wisesheets(
     
     # Scan for Wisesheets files
     wisesheets_dir = Path(__file__).parent / "data" / "wisesheets"
+    archive_dir = Path(__file__).parent / "archive" / "wisesheets"
     # Ignore Excel temp/lock files like "~$TICKER.xlsx"
     xlsx_files = [p for p in wisesheets_dir.glob("*.xlsx") if not p.name.startswith("~$")]
 
@@ -387,6 +401,16 @@ def batch_process_wisesheets(
                 summary,
                 assumptions_dir / f"{ticker}_assumptions.csv",
             )
+
+            # Move processed workbook into archive (only after success)
+            archive_dir.mkdir(parents=True, exist_ok=True)
+            try:
+                shutil.move(str(xlsx_path), str(archive_dir / xlsx_path.name))
+            except PermissionError:
+                print(
+                    f"ERROR: Permission denied moving {xlsx_path} to {archive_dir}. "
+                    "Close any open files and re-run."
+                )
             
             print(f"OK: {summary.signal}")
             
@@ -418,8 +442,11 @@ def batch_process_wisesheets(
         ticker = row["ticker"]
         output_path = output_dir / f"{ticker}_valuation.csv"
         row_df = pd.DataFrame([row])
-        row_df.to_csv(output_path, index=False)
-        print(f"OK: {output_path}")
+        try:
+            row_df.to_csv(output_path, index=False)
+            print(f"OK: {output_path}")
+        except PermissionError:
+            print(f"ERROR: Permission denied writing {output_path}. Close any open files and re-run.")
     
     print(f"\n  {len(df)} files created in: {output_dir}")
 

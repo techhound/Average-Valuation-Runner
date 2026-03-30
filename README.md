@@ -23,6 +23,9 @@ you can supply equivalent data in the exact Wisesheets template format under
 # Batch Processing Wisesheets for Power BI
 
 This guide shows how to batch process all your XLSX files and export results to Power BI.
+If you see "Permission denied" errors when writing to `output/`, close any open
+Excel/Power BI files using those CSVs. On some machines you may need to run the
+batch script with elevated permissions.
 
 In the Power BI subfolder, I included the starting (work in progress) PBIX for you to take a look. If you decide to use it as is and want to work in the Power Query to make changes, you'll need to change the paths of the source accordingly.
 
