@@ -1,4 +1,4 @@
-# Wisesheets Data Integration
+# Excel workbooks in Wisesheets format Data Integration
 
 This directory (`data/wisesheets/`) stores Excel workbooks for individual stocks in Wisesheets format.
 

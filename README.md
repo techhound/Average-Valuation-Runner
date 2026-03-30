@@ -27,6 +27,9 @@ Documentation on the case study can be find in the Documentation directory here 
 ## Technical Architecture
 To streamline the documentation, I've created a separate [architecture document](Architecture.md) that describes the technologies.
 
+## Power BI Case Study
+The completed power BI case study can be found ]here](https://DataScienceReview.com/Valuation).
+
 # Batch Processing Excel workbooks in Wisesheets format for Power BI
 
 This guide shows how to batch process all your XLSX files and export results to Power BI.
