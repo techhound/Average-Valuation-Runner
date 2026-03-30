@@ -4,8 +4,7 @@ This Python project creates valuations using market data. Today it supports:
 - Wisesheets Excel inputs (primary workflow)
 - Yahoo Finance (via `yfinance`) when `DATA_SOURCE = "yahoo"` in `config/settings.py`
 
-Raw Wisesheets files are read and transformed into CSV outputs. The input Excel
-files are not modified.
+Raw Excel sheets in Wisesheets format are read and transformed into CSV outputs. The input Excel files are not modified.
 
 Outputs are written under `output/`:
 - `wisesheets_results` (valuation results per ticker)
@@ -16,11 +15,19 @@ Outputs are written under `output/`:
 - `wisesheets_forecasted` (DCF forecast rows per ticker)
 - `computed_assumptions` (model assumptions used per run)
 
-**You will need a valid Wisesheets subscription to refresh the raw Excel data, or
-you can supply equivalent data in the exact Wisesheets template format under
-`data/wisesheets/`.**
+**You will need to create a spreadsheet that contains the needed data in wisesheets.com format. See Wisesheets.com for more information as to that format.
 
-# Batch Processing Wisesheets for Power BI
+We are currently working on a connector to the SEC data for use in this model. 
+
+## Case Study
+This code is part of a case study that is trying to discover if averaging the results of different valuation methods (DCF, Multiples, Grahap) will lead to better investing results. 
+
+Documentation on the case study can be find in the Documentation directory here on GitHub.
+
+## Technical Architecture
+To streamline the documentation, I've created a separate [architecture document](Architecture.md) that describes the technologies.
+
+# Batch Processing Excel workbooks in Wisesheets format for Power BI
 
 This guide shows how to batch process all your XLSX files and export results to Power BI.
 If you see "Permission denied" errors when writing to `output/`, close any open
