@@ -8,6 +8,14 @@ This process does not include any Wisesheets. You will need to provide them your
 
 We are working on a SEC connector which is currently publicly available and free. 
 
+## Case Study
+This code is part of a case study that is trying to discover if averaging the results of different valuation methods (DCF, Multiples, Grahap) will lead to better investing results. 
+
+Documentation on the case study can be find in the Documentation directory here on GitHub.
+
+## Technical Architecture
+To streamline the documentation, I've created a separate [architecture document](Architecture.md) that describes the technologies.
+
 ## Setup
 
 1. **Place one Excel file per stock** in this directory:

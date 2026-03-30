@@ -1,0 +1,177 @@
+{
+  "ticker": "AMZN",
+  "company": "Amazon.com, Inc.",
+  "current_price": 178.25,
+  "price_date": "2026-03-29",
+  "valuations": [
+    {
+      "analyst_company": "GuruFocus",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-28",
+      "dcf_value": 210.34,
+      "dcf_variant_note": "Earnings-Based DCF",
+      "multiples_value": 195.67,
+      "multiples_method": "GF Value (growth-adjusted historical multiples)",
+      "graham_value": 85.12,
+      "composite_value": 163.71,
+      "composite_method": "Average of DCF + Multiples + Graham",
+      "trifecta": true,
+      "notes": "Only source with full trifecta. Graham suppressed due to lower book value relevance for AMZN."
+    },
+    {
+      "analyst_company": "ValueInvesting.io",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-29",
+      "dcf_value": 205.18,
+      "dcf_variant_note": "5-Year Growth Exit DCF",
+      "multiples_value": 232.44,
+      "multiples_method": "Blended P/E and EV/EBITDA",
+      "graham_value": "N/A",
+      "composite_value": 218.81,
+      "composite_method": "Average of DCF + Multiples",
+      "trifecta": false,
+      "notes": "Higher multiples driven by AWS growth expectations."
+    },
+    {
+      "analyst_company": "Alpha Spread",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-25",
+      "dcf_value": 189.22,
+      "dcf_variant_note": "Base case DCF",
+      "multiples_value": 181.33,
+      "multiples_method": "Peer comparison (MSFT, GOOG, META)",
+      "graham_value": "N/A",
+      "composite_value": 185.28,
+      "composite_method": "Average of DCF + Multiples",
+      "trifecta": false,
+      "notes": "Suggests AMZN slightly undervalued vs peers."
+    },
+    {
+      "analyst_company": "Simply Wall St",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-01",
+      "dcf_value": 220.45,
+      "dcf_variant_note": "Two-stage FCFE model",
+      "multiples_value": 208.91,
+      "multiples_method": "Industry P/E applied",
+      "graham_value": "N/A",
+      "composite_value": 214.68,
+      "composite_method": "Average of DCF + Multiples",
+      "trifecta": false,
+      "notes": "Strong long-term FCF expansion assumed."
+    },
+    {
+      "analyst_company": "Finbox",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-20",
+      "dcf_value": 215.77,
+      "dcf_variant_note": "Blended DCF model",
+      "multiples_value": 206.54,
+      "multiples_method": "Comparable company analysis",
+      "graham_value": "N/A",
+      "composite_value": 211.16,
+      "composite_method": "Average of DCF + Multiples",
+      "trifecta": false,
+      "notes": "Moderate premium justified by AWS and ads segment."
+    },
+    {
+      "analyst_company": "Morningstar",
+      "analyst_individual": "Dan Romanoff, CPA",
+      "date_of_analysis": "2026-02-15",
+      "dcf_value": 240.00,
+      "dcf_variant_note": "Institutional DCF",
+      "multiples_value": 240.00,
+      "multiples_method": "Embedded multiples cross-check",
+      "graham_value": "N/A",
+      "composite_value": 240.00,
+      "composite_method": "Single fair value estimate",
+      "trifecta": false,
+      "notes": "Wide moat rating driven by AWS and logistics scale."
+    },
+    {
+      "analyst_company": "WallStreetZen",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-29",
+      "dcf_value": 170.92,
+      "dcf_variant_note": "Automated DCF",
+      "multiples_value": 188.55,
+      "multiples_method": "Forward P/E model",
+      "graham_value": "N/A",
+      "composite_value": 179.74,
+      "composite_method": "Average of DCF + Multiples",
+      "trifecta": false,
+      "notes": "More conservative assumptions vs peers."
+    },
+    {
+      "analyst_company": "Macroaxis",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-03-18",
+      "dcf_value": 230.00,
+      "dcf_variant_note": "Hybrid real value model",
+      "multiples_value": 230.00,
+      "multiples_method": "Integrated multiples",
+      "graham_value": "N/A",
+      "composite_value": 230.00,
+      "composite_method": "Single hybrid output",
+      "trifecta": false,
+      "notes": "Blends fundamentals and technical factors."
+    },
+    {
+      "analyst_company": "StockUnlock",
+      "analyst_individual": null,
+      "date_of_analysis": "2026-02-10",
+      "dcf_value": 238.00,
+      "dcf_variant_note": "Operating cash flow DCF",
+      "multiples_value": 238.00,
+      "multiples_method": "Implied forward multiple",
+      "graham_value": "N/A",
+      "composite_value": 238.00,
+      "composite_method": "Single integrated model",
+      "trifecta": false,
+      "notes": "Avoids capex distortion in FCF."
+    },
+    {
+      "analyst_company": "Seeking Alpha (Composite)",
+      "analyst_individual": "Multiple contributors",
+      "date_of_analysis": "2026-01-15",
+      "dcf_value": 210.50,
+      "dcf_variant_note": "Average contributor DCF",
+      "multiples_value": 185.00,
+      "multiples_method": "PEG-based valuation",
+      "graham_value": "N/A",
+      "composite_value": 197.75,
+      "composite_method": "Average of DCF + Multiples",
+      "trifecta": false,
+      "notes": "Wide dispersion across contributors."
+    }
+  ],
+  "summary_statistics": {
+    "total_valuations": 10,
+    "trifecta_count": 1,
+    "trifecta_sources": ["GuruFocus"],
+    "dcf_range": {
+      "low": 170.92,
+      "high": 240.00,
+      "median": 212.00
+    },
+    "multiples_range": {
+      "low": 181.33,
+      "high": 240.00,
+      "median": 208.00
+    },
+    "composite_range": {
+      "low": 179.74,
+      "high": 240.00,
+      "median": 214.00
+    }
+  },
+  "wall_street_consensus": {
+    "number_of_analysts": 52,
+    "consensus_rating": "Strong Buy",
+    "average_price_target": 235.00,
+    "price_target_range": {
+      "low": 180,
+      "high": 270
+    }
+  }
+}
