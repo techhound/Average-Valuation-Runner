@@ -1,4 +1,4 @@
-# Average Valuation Runner
+# Average Valuation Runner (Valuation Overdrive)
 
 This Python project creates valuations using market data. Today it supports:
 - Wisesheets Excel inputs (primary workflow)
@@ -29,6 +29,14 @@ To streamline the documentation, I've created a separate [architecture document]
 
 ## Power BI Case Study
 The completed power BI case study can be found here -> https://DataScienceReview.com/Valuation.
+
+GitHub Readme (This Page) -> [README](https://github.com/techhound/Average-Valuation-Runner#readme)
+
+## Video about the case study
+To learn more about the motivation behind this case study:
+## 🎥 Demo: AI-Powered Valuation Case Study
+
+[![Watch the demo](https://img.youtube.com/vi/xVt8M0osWxo/maxresdefault.jpg)](https://www.youtube.com/watch?v=xVt8M0osWxo)
 
 # Batch Processing Excel workbooks in Wisesheets format for Power BI
 
